@@ -1,0 +1,101 @@
+logging:
+  level:
+    root: warn
+    com.seliote.mlb: info
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p --- [%t] %-40.40logger{39} : %-0.-4096m%n'
+  file:
+    name: logs/mlb-mobile.log
+  logback:
+    rollingpolicy:
+      max-file-size: 50MB
+      total-size-cap: 500MB
+
+management:
+  endpoints:
+    enabled-by-default: false
+
+spring:
+  main:
+    banner-mode: log
+  datasource:
+    name: mlb-mobile
+    url: jdbc:mariadb://127.0.0.1:3306/music_linker?useSsl=false
+    username: emanresu
+    password: drowssap
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 10
+      connection-timeout: 3000
+      max-lifetime: 1800000
+      idle-timeout: 300000
+      connection-test-query: SELECT 1
+  jpa:
+    show-sql: false
+    open-in-view: true
+    generate-ddl: false
+  redis:
+    host: localhost
+    port: 6379
+    ssl: false
+    database: 7
+    username: root
+    password: redis520!
+  kafka:
+    bootstrap-servers:
+      - 127.0.0.1:9092
+    security:
+      protocol: SASL_PLAINTEXT
+    properties:
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="root" password="kafka520!"'
+    producer:
+      acks: all
+      retries: 3
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      auto-offset-reset: earliest
+      max-poll-records: 20
+      auto-commit-interval: 1000
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      missing-topics-fatal: true
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    wait-for-jobs-to-complete-on-shutdown: true
+    overwrite-existing-jobs: false
+    properties:
+      org.quartz:
+        scheduler:
+          instanceName: mlb-mobile-scheduler
+          instanceId: AUTO
+          batchTriggerAcquisitionMaxCount: 1
+        jobStore:
+          class: org.quartz.impl.jdbcjobstore.JobStoreTX
+          driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+          tablePrefix: QRTZ_
+          isClustered: true
+          clusterCheckinInterval: 15000
+          useProperties: false
+        threadPool:
+          class: org.quartz.simpl.SimpleThreadPool
+          threadCount: 20
+          threadPriority: 5
+
+com.seliote.mlb:
+  jws:
+    secret: 'HWBaJ8eTT7j7^FG04$&s^0MALapXpKoW'
+  minio:
+    endpoint: http://127.0.0.1:9000
+    access-key: root
+    secret-key: Changeme_123

@@ -1,0 +1,4 @@
+DROP DATABASE IF EXISTS music_linker;
+
+DROP USER IF EXISTS 'emanresu'@'%';
+FLUSH PRIVILEGES;

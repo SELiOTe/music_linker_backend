@@ -1,0 +1,34 @@
+server:
+  port: 7000
+  servlet:
+    encoding:
+      charset: UTF-8
+    context-path: /m
+
+spring:
+  profiles:
+    active: dev
+  web:
+    resources:
+      add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: true
+    deserialization:
+      FAIL_ON_IGNORED_PROPERTIES: true
+      FAIL_ON_UNKNOWN_PROPERTIES: true
+
+com.seliote.mlb:
+  redis:
+    namespace: mlb_m
+    key-separator: ':'
+  jws:
+    iss: mlb-mobile
+  minio:
+    bucket: mlb
+    catalog:
+      img: img
+      audio: audio
+      video: video
