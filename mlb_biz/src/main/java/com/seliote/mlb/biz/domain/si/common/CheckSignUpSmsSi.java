@@ -1,17 +1,18 @@
 package com.seliote.mlb.biz.domain.si.common;
 
 import com.seliote.mlb.common.jsr303.phone.PhoneCode;
+import com.seliote.mlb.common.jsr303.phone.VerifyCode;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import lombok.Data;
 
 /**
- * 发送短信验证码 SI
+ * 校验短信验证码 SI
  *
  * @author seliote
  * @version 2021-09-02
  */
 @Data
-public class SendSmsSi {
+public class CheckSignUpSmsSi {
 
     // 国际电话区号
     @PhoneCode
@@ -20,4 +21,8 @@ public class SendSmsSi {
     // 手机号码
     @TelNo
     private String telNo;
+
+    // 短信验证码
+    @VerifyCode
+    private String verifyCode;
 }

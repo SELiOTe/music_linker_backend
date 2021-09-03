@@ -1,5 +1,6 @@
 package com.seliote.mlb.auth.domain;
 
+import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
 import com.seliote.mlb.common.exception.AuthException;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +17,6 @@ import org.springframework.util.StringUtils;
 @Builder
 public class Role implements GrantedAuthority {
 
-    public static final String ADMIN = "admin";
-    public static final String USER = "user";
-
     private String authority;
 
     @Override
@@ -28,7 +26,8 @@ public class Role implements GrantedAuthority {
 
     @SuppressWarnings("unused")
     public void setAuthority(String authority) {
-        if (!StringUtils.hasText(authority) || (!authority.equals(ADMIN) && !authority.equals(USER))) {
+        if (!StringUtils.hasText(authority) ||
+                (!authority.equals(RoleNameEnum.admin.name()) && !authority.equals(RoleNameEnum.user.name()))) {
             throw new AuthException(authority + " is not a illegal role!");
         }
         this.authority = authority;

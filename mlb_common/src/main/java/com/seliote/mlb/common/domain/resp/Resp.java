@@ -103,7 +103,7 @@ public class Resp<T> {
      *
      * @return Resp 对象
      */
-    public static Resp<Void> resp() {
+    public static <T> Resp<T> resp() {
         return resp(SUCCESS_CODE, SUCCESS_MSG, null);
     }
 
@@ -114,7 +114,7 @@ public class Resp<T> {
      * @param msg  响应码描述
      * @return Resp 对象
      */
-    public static Resp<Void> resp(@NonNull Integer code, @NonNull String msg) {
+    public static <T> Resp<T> resp(@NonNull Integer code, @NonNull String msg) {
         return resp(code, msg, null);
     }
 

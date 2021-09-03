@@ -33,6 +33,10 @@
             <groupId>com.seliote</groupId>
             <artifactId>mlb-dao</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.seliote</groupId>
+            <artifactId>mlb-auth</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -1,6 +1,7 @@
 package com.seliote.mlb.biz.service;
 
 import com.seliote.mlb.biz.domain.si.user.IsSignedUpSi;
+import com.seliote.mlb.biz.domain.si.user.SignUpSi;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -22,4 +23,11 @@ public interface UserService {
      * @return 已注册返回 true，否则返回 false
      */
     boolean isSignedUp(@NotNull @Valid IsSignedUpSi si);
+
+    /**
+     * 普通用户注册
+     *
+     * @param si 请求 SI
+     */
+    void signUp(@NotNull @Valid SignUpSi si);
 }

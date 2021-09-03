@@ -1,12 +1,14 @@
 package com.seliote.mlb.biz.service.impl;
 
 import com.seliote.mlb.biz.domain.si.common.CheckCaptchaSi;
-import com.seliote.mlb.biz.domain.si.common.SendSmsSi;
+import com.seliote.mlb.biz.domain.si.common.CheckSignUpSmsSi;
+import com.seliote.mlb.biz.domain.si.common.SendSignUpSmsSi;
 import com.seliote.mlb.biz.domain.so.country.CaptchaSo;
 import com.seliote.mlb.biz.service.CommonService;
 import com.seliote.mlb.common.exception.UtilException;
 import com.seliote.mlb.common.service.RedisService;
 import com.seliote.mlb.common.util.CommonUtils;
+import com.seliote.mlb.dao.repo.CountryRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,13 +41,17 @@ public class CommonServiceImpl implements CommonService {
     // 图形验证码前景色范围
     private final Color[] CAPTCHA_FG_COLOR = new Color[]{Color.GRAY, Color.BLACK, Color.GREEN,
             Color.ORANGE, Color.RED, Color.BLUE};
-    private final RedisService redisService;
     // 图形验证码基大小
     int CAPTCHA_BASE_SIZE = 200;
 
+    private final RedisService redisService;
+    private final CountryRepo countryRepo;
+
     @Autowired
-    public CommonServiceImpl(RedisService redisService) {
+    public CommonServiceImpl(RedisService redisService,
+                             CountryRepo countryRepo) {
         this.redisService = redisService;
+        this.countryRepo = countryRepo;
     }
 
     @Override
@@ -72,7 +78,13 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public boolean sendSms(SendSmsSi si) {
+    public boolean sendSignUpSms(SendSignUpSmsSi si) {
+        // 校验一下国家码和手机号码格式
+        var countryEntity = countryRepo.findByPhoneCode(si.getPhoneCode());
+        if (countryEntity.isEmpty() || !si.getTelNo().matches(countryEntity.get().getPhonePattern())) {
+            log.error("Can not send sign up sms to {}, because phone code incorrect or telephone number incorrect", si);
+            return false;
+        }
         var sb = new StringBuilder();
         for (int i = 0; i < VERIFY_CODE_LEN; i++) {
             sb.append(CommonUtils.getRandom().nextInt(10));
@@ -81,6 +93,15 @@ public class CommonServiceImpl implements CommonService {
         redisService.set(Duration.ofMinutes(5), sb.toString(),
                 "sms", "sign_up", si.getPhoneCode(), si.getTelNo());
         return true;
+    }
+
+    @Override
+    public boolean checkSignUpSms(CheckSignUpSmsSi si) {
+        var verifyCode = redisService.get("sms", "sign_up", si.getPhoneCode(), si.getTelNo());
+        if (verifyCode.isEmpty()) {
+            return false;
+        }
+        return verifyCode.get().equalsIgnoreCase(si.getVerifyCode());
     }
 
     /**

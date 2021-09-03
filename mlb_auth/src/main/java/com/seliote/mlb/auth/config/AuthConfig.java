@@ -1,7 +1,7 @@
 package com.seliote.mlb.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seliote.mlb.auth.domain.Role;
+import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
 import com.seliote.mlb.common.domain.resp.Resp;
 import com.seliote.mlb.common.util.NetworkUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +57,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers(permitAll).permitAll()
-                .and().authorizeRequests().antMatchers("/admin/**").hasAnyRole(Role.ADMIN)
-                .and().authorizeRequests().antMatchers("/**").hasAnyRole(Role.USER)
+                .and().authorizeRequests().antMatchers("/admin/**").hasAnyRole(RoleNameEnum.admin.name())
+                .and().authorizeRequests().antMatchers("/**").hasAnyRole(RoleNameEnum.user.name())
                 .and().authorizeRequests().anyRequest().authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint((req, resp, e) -> {

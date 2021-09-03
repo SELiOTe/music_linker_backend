@@ -1,12 +1,12 @@
 package com.seliote.mlb.dao.entity;
 
+import com.seliote.mlb.common.jsr303.userinfo.RoleName;
 import com.seliote.mlb.dao.AuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotBlank;
 
 /**
  * 用户角色实体
@@ -21,6 +21,6 @@ public class RoleEntity extends AuditingEntity {
 
     // 角色名
     @Column(name = "role_name")
-    @NotBlank
+    @RoleName
     private String roleName;
 }
