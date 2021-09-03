@@ -78,6 +78,8 @@ public class CommonServiceImpl implements CommonService {
             sb.append(CommonUtils.getRandom().nextInt(10));
         }
         log.info("Send sign up verify code sms {} to +{}-{}", sb, si.getPhoneCode(), si.getTelNo());
+        redisService.set(Duration.ofMinutes(5), sb.toString(),
+                "sms", "sign_up", si.getPhoneCode(), si.getTelNo());
         return true;
     }
 
