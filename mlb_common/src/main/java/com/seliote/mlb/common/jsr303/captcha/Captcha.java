@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "[a-zA-Z\\d]{4}")
+@Pattern(regexp = "^[a-zA-Z\\d]{4}$")
 public @interface Captcha {
 
     String message() default "Illegal captcha text";

@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "[a-z\\d\\-]{36}")
+@Pattern(regexp = "^[a-z\\d\\-]{36}$")
 public @interface Uuid {
 
     String message() default "Illegal captcha UUID";

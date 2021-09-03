@@ -1,4 +1,4 @@
-package com.seliote.mlb.common.jsr303.country;
+package com.seliote.mlb.common.jsr303.phone;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
 import java.lang.annotation.*;
 
 /**
- * 国家码 JSR 303 校验
+ * 短信验证码 JSR 303 校验
  * 不可为 null
  *
  * @author seliote
@@ -21,10 +21,10 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "^[a-zA-Z]{2}$")
-public @interface CountryCode {
+@Pattern(regexp = "^\\d{6}$")
+public @interface VerifyCode {
 
-    String message() default "Illegal country code";
+    String message() default "Illegal verify code";
 
     Class<?>[] groups() default {};
 
@@ -34,6 +34,6 @@ public @interface CountryCode {
     @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
-        CountryCode[] value();
+        VerifyCode[] value();
     }
 }

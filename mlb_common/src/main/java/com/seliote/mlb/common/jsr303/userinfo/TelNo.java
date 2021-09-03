@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "\\d{6,15}")
+@Pattern(regexp = "^\\d{6,15}$")
 public @interface TelNo {
 
     String message() default "Illegal telephone number";
