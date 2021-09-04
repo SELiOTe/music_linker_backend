@@ -30,11 +30,11 @@ import java.io.IOException;
 @Component
 public class JwsFilter extends OncePerRequestFilter {
 
-    // Token 值前缀
-    private static final String AUTHORIZATION_VALUE_PREFIX = "Bearer";
-
     // Redis 缓存 key
     public static final String REDIS_KEY = "jws";
+
+    // Token 值前缀
+    private static final String AUTHORIZATION_VALUE_PREFIX = "Bearer";
 
     private final RedisService redisService;
     private final YmlConfig.Jws jwsConfig;
