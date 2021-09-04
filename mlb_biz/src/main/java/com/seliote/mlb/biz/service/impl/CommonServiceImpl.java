@@ -2,6 +2,7 @@ package com.seliote.mlb.biz.service.impl;
 
 import com.seliote.mlb.biz.domain.si.common.CheckCaptchaSi;
 import com.seliote.mlb.biz.domain.si.common.CheckSignUpSmsSi;
+import com.seliote.mlb.biz.domain.si.common.RemoveSignUpSmsSi;
 import com.seliote.mlb.biz.domain.si.common.SendSignUpSmsSi;
 import com.seliote.mlb.biz.domain.so.country.CaptchaSo;
 import com.seliote.mlb.biz.service.CommonService;
@@ -11,6 +12,7 @@ import com.seliote.mlb.common.util.CommonUtils;
 import com.seliote.mlb.dao.repo.CountryRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -41,11 +43,10 @@ public class CommonServiceImpl implements CommonService {
     // 图形验证码前景色范围
     private final Color[] CAPTCHA_FG_COLOR = new Color[]{Color.GRAY, Color.BLACK, Color.GREEN,
             Color.ORANGE, Color.RED, Color.BLUE};
-    // 图形验证码基大小
-    int CAPTCHA_BASE_SIZE = 200;
-
     private final RedisService redisService;
     private final CountryRepo countryRepo;
+    // 图形验证码基大小
+    int CAPTCHA_BASE_SIZE = 200;
 
     @Autowired
     public CommonServiceImpl(RedisService redisService,
@@ -90,18 +91,33 @@ public class CommonServiceImpl implements CommonService {
             sb.append(CommonUtils.getRandom().nextInt(10));
         }
         log.info("Send sign up verify code sms {} to +{}-{}", sb, si.getPhoneCode(), si.getTelNo());
-        redisService.set(Duration.ofMinutes(5), sb.toString(),
-                "sms", "sign_up", si.getPhoneCode(), si.getTelNo());
+        redisService.set(Duration.ofMinutes(5), sb.toString(), getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
         return true;
     }
 
     @Override
     public boolean checkSignUpSms(CheckSignUpSmsSi si) {
-        var verifyCode = redisService.get("sms", "sign_up", si.getPhoneCode(), si.getTelNo());
+        var verifyCode = redisService.get(getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
         if (verifyCode.isEmpty()) {
             return false;
         }
         return verifyCode.get().equalsIgnoreCase(si.getVerifyCode());
+    }
+
+    @Override
+    public void removeSignUpSms(RemoveSignUpSmsSi si) {
+        redisService.remove(getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
+    }
+
+    /**
+     * 获取注册短信验证码 Redis 存储 Key 数组
+     *
+     * @param phoneCode 国际电话区号
+     * @param telNo     手机号码
+     * @return 注册短信验证码 Redis 存储 Key 数组
+     */
+    private String[] getSignUpSmsRedisKey(@NonNull String phoneCode, @NonNull String telNo) {
+        return new String[]{"sms", "sign_up", phoneCode, telNo};
     }
 
     /**

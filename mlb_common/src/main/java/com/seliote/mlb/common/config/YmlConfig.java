@@ -32,6 +32,7 @@ public class YmlConfig {
     @Setter
     public static class Jws {
         private String iss;
+        private Long validDays;
         private String secret;
     }
 

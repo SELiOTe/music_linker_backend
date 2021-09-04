@@ -49,7 +49,6 @@ public class UserEntity extends AuditingEntity {
     private Boolean enable;
 
     // 用户角色
-    // 所有级联
     @NotEmpty
     @Valid
     @ManyToMany(fetch = FetchType.LAZY)

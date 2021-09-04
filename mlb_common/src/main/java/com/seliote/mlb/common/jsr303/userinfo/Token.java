@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "^[a-zA-Z\\d+/=]+\\.[a-zA-Z\\d+/=]+\\.[a-zA-Z\\d+/=]+$")
+@Pattern(regexp = "^[a-zA-Z\\d+/=-]+\\.[a-zA-Z\\d+/=-]+\\.\\S+$")
 public @interface Token {
 
     String message() default "Illegal token";

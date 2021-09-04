@@ -73,3 +73,19 @@ CREATE TABLE user_role
     CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_unicode_ci
     COMMENT = 'user role';
+
+CREATE TABLE trust_device
+(
+    id                 BIGINT       NOT NULL AUTO_INCREMENT COMMENT 'row id',
+    user_id            BIGINT       NOT NULL COMMENT 'user id',
+    device_no          VARCHAR(128) NOT NULL COMMENT 'device serial number',
+    created_date       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
+    last_modified_date TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
+    PRIMARY KEY pk_i (id) COMMENT 'row primary key',
+    FOREIGN KEY fk_td_ui (user_id) REFERENCES user (id),
+    UNIQUE KEY uk_td_ui_dn (user_id, device_no) COMMENT 'unique of user id and device no'
+)
+    ENGINE = InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    COMMENT = 'user trust device';

@@ -3,7 +3,7 @@ package com.seliote.mlb.api.domain.req.auth;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seliote.mlb.common.jsr303.phone.PhoneCode;
 import com.seliote.mlb.common.jsr303.phone.VerifyCode;
-import com.seliote.mlb.common.jsr303.userinfo.DeviceId;
+import com.seliote.mlb.common.jsr303.userinfo.DeviceNo;
 import com.seliote.mlb.common.jsr303.userinfo.PlaintextPassword;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import lombok.Data;
@@ -40,7 +40,7 @@ public class SignUpReq {
     private String verifyCode;
 
     // 设备码
-    @JsonProperty("device_id")
-    @DeviceId
-    private String deviceId;
+    @JsonProperty("device_no")
+    @DeviceNo
+    private String deviceNo;
 }

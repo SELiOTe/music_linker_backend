@@ -21,10 +21,10 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "^\\S+$")
-public @interface DeviceId {
+@Pattern(regexp = "^\\S{6,128}$")
+public @interface DeviceNo {
 
-    String message() default "Illegal device ID";
+    String message() default "Illegal device number";
 
     Class<?>[] groups() default {};
 
@@ -34,6 +34,6 @@ public @interface DeviceId {
     @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
-        DeviceId[] value();
+        DeviceNo[] value();
     }
 }

@@ -2,6 +2,7 @@ package com.seliote.mlb.api.domain.req.auth.mapper;
 
 import com.seliote.mlb.api.domain.req.auth.SignUpReq;
 import com.seliote.mlb.biz.domain.si.common.CheckSignUpSmsSi;
+import com.seliote.mlb.biz.domain.si.common.RemoveSignUpSmsSi;
 import com.seliote.mlb.biz.domain.si.user.SignUpSi;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -33,4 +34,12 @@ public interface SignUpReqMapper {
      * @return 普通用户注册 SI
      */
     SignUpSi toSignUpSi(SignUpReq req);
+
+    /**
+     * 注册接口 Req 转为移除注册短信验证码 SI
+     *
+     * @param req 注册接口 Req
+     * @return 移除注册短信验证码 SI
+     */
+    RemoveSignUpSmsSi toRemoveSignUpSmsSi(SignUpReq req);
 }

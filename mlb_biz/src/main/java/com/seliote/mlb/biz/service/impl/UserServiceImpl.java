@@ -1,13 +1,21 @@
 package com.seliote.mlb.biz.service.impl;
 
+import com.seliote.mlb.auth.domain.JwsPayload;
+import com.seliote.mlb.auth.domain.Role;
+import com.seliote.mlb.auth.service.JwsService;
+import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
 import com.seliote.mlb.biz.domain.si.user.IsSignedUpSi;
 import com.seliote.mlb.biz.domain.si.user.SignUpSi;
+import com.seliote.mlb.biz.domain.so.user.SignUpSo;
+import com.seliote.mlb.biz.domain.so.user.mapper.SignUpSoMapper;
 import com.seliote.mlb.biz.service.UserService;
+import com.seliote.mlb.common.config.YmlConfig;
 import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
-import com.seliote.mlb.common.exception.ApiException;
+import com.seliote.mlb.dao.entity.TrustDeviceEntity;
 import com.seliote.mlb.dao.entity.UserEntity;
 import com.seliote.mlb.dao.repo.CountryRepo;
 import com.seliote.mlb.dao.repo.RoleRepo;
+import com.seliote.mlb.dao.repo.TrustDeviceRepo;
 import com.seliote.mlb.dao.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 用户信息 Service 实现
@@ -29,19 +39,28 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
+    private final YmlConfig.Jws jwsConfig;
     private final UserRepo userRepo;
     private final CountryRepo countryRepo;
     private final RoleRepo roleRepo;
+    private final TrustDeviceRepo trustDeviceRepo;
+    private final JwsService jwsService;
 
     @Autowired
     public UserServiceImpl(PasswordEncoder passwordEncoder,
+                           YmlConfig ymlConfig,
                            UserRepo userRepo,
                            CountryRepo countryRepo,
-                           RoleRepo roleRepo) {
+                           RoleRepo roleRepo,
+                           TrustDeviceRepo trustDeviceRepo,
+                           JwsService jwsService) {
         this.passwordEncoder = passwordEncoder;
+        this.jwsConfig = ymlConfig.getJws();
         this.userRepo = userRepo;
         this.countryRepo = countryRepo;
         this.roleRepo = roleRepo;
+        this.trustDeviceRepo = trustDeviceRepo;
+        this.jwsService = jwsService;
     }
 
     @Override
@@ -52,16 +71,16 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void signUp(SignUpSi si) {
+    public Optional<SignUpSo> signUp(SignUpSi si) {
         var countryEntity = countryRepo.findByPhoneCode(si.getPhoneCode());
         if (countryEntity.isEmpty()) {
             log.error("Error sign up, because phone code {} incorrect for {}", si.getPhoneCode(), si);
-            throw new ApiException(2, "incorrect phone code");
+            return Optional.empty();
         }
         var roleEntity = roleRepo.findByRoleName(RoleNameEnum.user.name());
         if (roleEntity.isEmpty()) {
             log.error("Error sign up, because user role name incorrect");
-            throw new ApiException(3, "sign up failed");
+            return Optional.empty();
         }
         var userEntity = new UserEntity();
         userEntity.setCountryEntity(countryEntity.get());
@@ -70,5 +89,43 @@ public class UserServiceImpl implements UserService {
         userEntity.setEnable(true);
         userEntity.setRoles(new HashSet<>(List.of(roleEntity.get())));
         userRepo.save(userEntity);
+        log.info("Sign up success, {}", si);
+        return Optional.of(SignUpSoMapper.INSTANCE.fromUserEntity(userEntity));
+    }
+
+    @Override
+    public boolean addTrustDevice(AddTrustDeviceSi si) {
+        var userEntity = userRepo.findById(si.getUserId());
+        if (userEntity.isEmpty()) {
+            log.info("User {} not exists, but you want to add trust device", si.getUserId());
+            return false;
+        }
+        var trustDeviceEntity = new TrustDeviceEntity();
+        trustDeviceEntity.setUserEntity(userEntity.get());
+        trustDeviceEntity.setDeviceNo(si.getDeviceNo());
+        trustDeviceRepo.save(trustDeviceEntity);
+        log.info("User {} add trust device {}", si.getUserId(), si.getDeviceNo());
+        return true;
+    }
+
+    @Override
+    public Optional<String> createToken(Long userId) {
+        var userEntity = userRepo.findById(userId);
+        if (userEntity.isEmpty()) {
+            log.info("User {} not exists, but you want to create token", userId);
+            return Optional.empty();
+        }
+        var roles = new HashSet<Role>();
+        userEntity.get().getRoles().forEach(roleEntity ->
+                roles.add(Role.builder().authority(roleEntity.getRoleName()).build()));
+        var jwsPayload = JwsPayload.builder()
+                .iss(jwsConfig.getIss())
+                .aud(userEntity.get().getId())
+                .exp(Instant.now().plusSeconds(jwsConfig.getValidDays() * 24 * 60 * 60))
+                .ebl(userEntity.get().getEnable())
+                .roles(roles)
+                .build();
+        log.info("Create bearer token for {}", userId);
+        return jwsService.sign(jwsPayload);
     }
 }

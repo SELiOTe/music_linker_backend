@@ -2,8 +2,10 @@ package com.seliote.mlb.auth.domain;
 
 import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
 import com.seliote.mlb.common.exception.AuthException;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
 
@@ -14,6 +16,8 @@ import org.springframework.util.StringUtils;
  * @version 2021-07-04
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Role implements GrantedAuthority {
 

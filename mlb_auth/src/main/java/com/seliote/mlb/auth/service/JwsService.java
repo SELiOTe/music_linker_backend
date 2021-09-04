@@ -31,5 +31,6 @@ public interface JwsService {
      * @param jws JWS 签名
      * @return JWS 负载，解析失败时返回空
      */
+    @Valid
     Optional<JwsPayload> parse(@NotBlank String jws);
 }

@@ -1,13 +1,17 @@
 package com.seliote.mlb.api;
 
 import com.seliote.mlb.api.domain.req.auth.IsSignedUpReq;
+import com.seliote.mlb.api.domain.req.auth.SignUpReq;
 import com.seliote.mlb.api.domain.req.auth.SignUpSmsReq;
 import com.seliote.mlb.api.domain.req.auth.mapper.IsSignedUpReqMapper;
+import com.seliote.mlb.api.domain.req.auth.mapper.SignUpReqMapper;
 import com.seliote.mlb.api.domain.req.auth.mapper.SignUpSmsReqMapper;
 import com.seliote.mlb.api.domain.resp.auth.CaptchaResp;
 import com.seliote.mlb.api.domain.resp.auth.CountryListResp;
+import com.seliote.mlb.api.domain.resp.auth.SignUpResp;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CaptchaRespMapper;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CountryListRespMapper;
+import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
 import com.seliote.mlb.biz.service.CommonService;
 import com.seliote.mlb.biz.service.CountryService;
 import com.seliote.mlb.biz.service.UserService;
@@ -103,20 +107,59 @@ public class AuthController {
      */
     @Valid
     @PostMapping("/sign_up_sms")
-    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 3)
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 2)
     public Resp<Void> signUpSms(@RequestBody @NotNull @Valid SignUpSmsReq req) {
         if (!commonService.checkCaptcha(SignUpSmsReqMapper.INSTANCE.toCheckCaptchaSi(req))) {
+            log.info("Incorrect captcha in send sign up sms, {}", req);
             commonService.removeCaptcha(req.getUuid());
             return Resp.resp(1, "captcha code incorrect");
         }
         // 无论成功与否都删除验证码，防止验证码重放
         commonService.removeCaptcha(req.getUuid());
         if (userService.isSignedUp(SignUpSmsReqMapper.INSTANCE.toIsSignedUpSi(req))) {
+            log.info("Used {} had signed up when sign up", req);
             return Resp.resp(2, "user had signed up");
         }
-        if (!commonService.sendSms(SignUpSmsReqMapper.INSTANCE.toSendSmsSi(req))) {
+        if (!commonService.sendSignUpSms(SignUpSmsReqMapper.INSTANCE.toSendSmsSi(req))) {
+            log.warn("Send sign up sms failed, {}", req);
             return Resp.resp(3, "send sign up verify code sms failed");
         }
+        log.info("Send sign up sms to {} success", req);
         return Resp.resp();
+    }
+
+    /**
+     * 注册接口
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为注册成功会同时返回鉴权 Token，1 短信验证码不正确，2 为注册失败
+     * 3 为添加受信任设备失败，4 为获取登录 Token 失败
+     */
+    @Valid
+    @PostMapping("/sign_up")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 2)
+    public Resp<SignUpResp> signUp(@RequestBody @NotNull @Valid SignUpReq req) {
+        if (!commonService.checkSignUpSms(SignUpReqMapper.INSTANCE.toCheckSignUpSmsSi(req))) {
+            log.info("Failed check sign up verify code, {}", req);
+            return Resp.resp(1, "verify code incorrect", null);
+        }
+        // 成功使用后删除验证码，防止重放
+        commonService.removeSignUpSms(SignUpReqMapper.INSTANCE.toRemoveSignUpSmsSi(req));
+        var signUpSo = userService.signUp(SignUpReqMapper.INSTANCE.toSignUpSi(req));
+        if (signUpSo.isEmpty()) {
+            log.warn("Failed sign up for {}", req);
+            return Resp.resp(2, "sign up failed");
+        }
+        if (!userService.addTrustDevice(AddTrustDeviceSi.builder()
+                .userId(signUpSo.get().getUserId()).deviceNo(req.getDeviceNo()).build())) {
+            log.error("User sign up success, but add trust device failed");
+            return Resp.resp(3, "add trust device failed");
+        }
+        var token = userService.createToken(signUpSo.get().getUserId());
+        if (token.isEmpty()) {
+            log.error("Failed create token for {} when sign up", req);
+            return Resp.resp(4, "can not create token for user");
+        }
+        return Resp.resp(SignUpResp.builder().token(token.get()).build());
     }
 }

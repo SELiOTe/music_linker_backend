@@ -26,6 +26,7 @@ com.seliote.mlb:
     key-separator: ':'
   jws:
     iss: mlb-mobile
+    valid-days: 30
   minio:
     bucket: mlb
     catalog:
