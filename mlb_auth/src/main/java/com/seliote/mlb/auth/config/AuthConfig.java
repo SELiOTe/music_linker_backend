@@ -53,7 +53,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        final var permitAll = new String[]{"/auth/**"};
+        final var permitAll = new String[]{"/auth/**", "/actuator/**"};
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers(permitAll).permitAll()
