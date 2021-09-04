@@ -1,4 +1,4 @@
-package com.seliote.mlb.api;
+package com.seliote.mlb.api.controller;
 
 import com.seliote.mlb.api.domain.req.auth.IsSignedUpReq;
 import com.seliote.mlb.api.domain.req.auth.SignUpReq;
