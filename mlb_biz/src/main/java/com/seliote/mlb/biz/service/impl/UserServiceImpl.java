@@ -1,5 +1,6 @@
 package com.seliote.mlb.biz.service.impl;
 
+import com.seliote.mlb.auth.config.JwsFilter;
 import com.seliote.mlb.auth.domain.JwsPayload;
 import com.seliote.mlb.auth.domain.Role;
 import com.seliote.mlb.auth.service.JwsService;
@@ -11,6 +12,7 @@ import com.seliote.mlb.biz.domain.so.user.mapper.SignUpSoMapper;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.YmlConfig;
 import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
+import com.seliote.mlb.common.service.RedisService;
 import com.seliote.mlb.dao.entity.TrustDeviceEntity;
 import com.seliote.mlb.dao.entity.UserEntity;
 import com.seliote.mlb.dao.repo.CountryRepo;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +41,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final RedisService redisService;
     private final PasswordEncoder passwordEncoder;
     private final YmlConfig.Jws jwsConfig;
     private final UserRepo userRepo;
@@ -47,13 +51,15 @@ public class UserServiceImpl implements UserService {
     private final JwsService jwsService;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder,
+    public UserServiceImpl(RedisService redisService,
+                           PasswordEncoder passwordEncoder,
                            YmlConfig ymlConfig,
                            UserRepo userRepo,
                            CountryRepo countryRepo,
                            RoleRepo roleRepo,
                            TrustDeviceRepo trustDeviceRepo,
                            JwsService jwsService) {
+        this.redisService = redisService;
         this.passwordEncoder = passwordEncoder;
         this.jwsConfig = ymlConfig.getJws();
         this.userRepo = userRepo;
@@ -125,7 +131,14 @@ public class UserServiceImpl implements UserService {
                 .ebl(userEntity.get().getEnable())
                 .roles(roles)
                 .build();
+        var token = jwsService.sign(jwsPayload);
+        if (token.isEmpty()) {
+            log.warn("Can not create token for {}", userId);
+            return Optional.empty();
+        }
         log.info("Create bearer token for {}", userId);
-        return jwsService.sign(jwsPayload);
+        redisService.set(Duration.ofDays(jwsConfig.getValidDays()), token.get(),
+                JwsFilter.REDIS_KEY, jwsPayload.getName());
+        return token;
     }
 }

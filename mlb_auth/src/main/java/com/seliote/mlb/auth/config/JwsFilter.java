@@ -34,7 +34,7 @@ public class JwsFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_VALUE_PREFIX = "Bearer";
 
     // Redis 缓存 key
-    private static final String REDIS_KEY = "jws";
+    public static final String REDIS_KEY = "jws";
 
     private final RedisService redisService;
     private final YmlConfig.Jws jwsConfig;
