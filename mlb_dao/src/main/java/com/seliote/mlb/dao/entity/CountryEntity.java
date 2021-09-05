@@ -6,9 +6,6 @@ import com.seliote.mlb.common.jsr303.country.LocalName;
 import com.seliote.mlb.common.jsr303.phone.PhoneCode;
 import com.seliote.mlb.common.jsr303.phone.PhonePattern;
 import com.seliote.mlb.dao.AuditingEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,34 +16,72 @@ import javax.persistence.Entity;
  * @author seliote
  * @version 2021-06-27
  */
-@Data
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("unused")
 @Entity(name = "country")
 public class CountryEntity extends AuditingEntity {
 
     // 国家码
-    @CountryCode
-    @Column(name = "country_code")
     private String countryCode;
 
     // 英文名称
-    @EnName
-    @Column(name = "en_name")
     private String enName;
 
     // 母语中的名称
-    @LocalName
-    @Column(name = "local_name")
     private String localName;
 
     // 国际电话区号
-    @PhoneCode
-    @Column(name = "phone_code")
     private String phoneCode;
 
     // 手机号码格式正则
+    private String phonePattern;
+
+    @CountryCode
+    @Column(name = "country_code")
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    @EnName
+    @Column(name = "en_name")
+    public String getEnName() {
+        return enName;
+    }
+
+    public void setEnName(String enName) {
+        this.enName = enName;
+    }
+
+    @LocalName
+    @Column(name = "local_name")
+    public String getLocalName() {
+        return localName;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
+
+    @PhoneCode
+    @Column(name = "phone_code")
+    public String getPhoneCode() {
+        return phoneCode;
+    }
+
+    public void setPhoneCode(String phoneCode) {
+        this.phoneCode = phoneCode;
+    }
+
     @PhonePattern
     @Column(name = "phone_pattern")
-    private String phonePattern;
+    public String getPhonePattern() {
+        return phonePattern;
+    }
+
+    public void setPhonePattern(String phonePattern) {
+        this.phonePattern = phonePattern;
+    }
 }

@@ -1,6 +1,5 @@
 package com.seliote.mlb.dao;
 
-import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,24 +13,48 @@ import java.time.Instant;
  * @author seliote
  * @version 2021-06-27
  */
-@Data
+@SuppressWarnings("unused")
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public abstract class AuditingEntity {
 
     // row id
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     // 行创建时间
-    @CreatedDate
-    @Column(name = "created_date")
     private Instant createdDate;
 
     // 行最后修改时间
+    private Instant lastModifiedDate;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @CreatedDate
+    @Column(name = "created_date")
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
     @LastModifiedDate
     @Column(name = "last_modified_date")
-    private Instant lastModifiedDate;
+    public Instant getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }

@@ -1,9 +1,6 @@
 package com.seliote.mlb.dao.entity;
 
 import com.seliote.mlb.dao.AuditingEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,19 +12,33 @@ import javax.validation.constraints.NotNull;
  * @author seliote
  * @version 2021-07-10
  */
-@Data
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("unused")
 @Entity(name = "user_role")
 public class UserRoleEntity extends AuditingEntity {
 
     // 用户 ID
-    @Column(name = "user_id")
-    @NotNull
     private Long userId;
 
     // 用户 ID
+    private Long roleId;
+
+    @Column(name = "user_id")
+    @NotNull
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     @Column(name = "role_id")
     @NotNull
-    private Long roleId;
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 }
