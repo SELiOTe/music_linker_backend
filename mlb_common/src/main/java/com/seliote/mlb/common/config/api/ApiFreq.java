@@ -23,7 +23,7 @@ public @interface ApiFreq {
     String keySeparator() default ",";
 
     // 最大频率（包含）
-    int freq() default 10;
+    int freq() default 5;
 
     // 时间
     long time() default 1;
