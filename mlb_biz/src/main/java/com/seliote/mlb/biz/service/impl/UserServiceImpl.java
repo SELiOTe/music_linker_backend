@@ -5,9 +5,12 @@ import com.seliote.mlb.auth.domain.JwsPayload;
 import com.seliote.mlb.auth.domain.Role;
 import com.seliote.mlb.auth.service.JwsService;
 import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
-import com.seliote.mlb.biz.domain.si.user.IsSignedUpSi;
+import com.seliote.mlb.biz.domain.si.user.FindUserSi;
+import com.seliote.mlb.biz.domain.si.user.IsTrustDeviceSi;
 import com.seliote.mlb.biz.domain.si.user.SignUpSi;
+import com.seliote.mlb.biz.domain.so.user.FindUserSo;
 import com.seliote.mlb.biz.domain.so.user.SignUpSo;
+import com.seliote.mlb.biz.domain.so.user.mapper.FindUserSoMapper;
 import com.seliote.mlb.biz.domain.so.user.mapper.SignUpSoMapper;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.YmlConfig;
@@ -70,9 +73,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isSignedUp(IsSignedUpSi si) {
-        return userRepo.findByCountryEntity_PhoneCodeAndTelNo(si.getPhoneCode(), si.getTelNo())
-                .isPresent();
+    public Optional<FindUserSo> findUser(FindUserSi si) {
+        var userEntity =
+                userRepo.findByCountryEntity_PhoneCodeAndTelNo(si.getPhoneCode(), si.getTelNo());
+        if (userEntity.isEmpty()) {
+            log.debug("User {} not find", si);
+            return Optional.empty();
+        }
+        log.debug("Find user {}", si);
+        return Optional.of(FindUserSoMapper.INSTANCE.fromUserEntity(userEntity.get()));
     }
 
     @Transactional
@@ -140,5 +149,10 @@ public class UserServiceImpl implements UserService {
         redisService.set(Duration.ofDays(jwsConfig.getValidDays()), token.get(),
                 JwsFilter.REDIS_KEY, jwsPayload.getName());
         return token;
+    }
+
+    @Override
+    public boolean isTrustDevice(IsTrustDeviceSi si) {
+        return trustDeviceRepo.existsByUserEntity_IdAndDeviceNo(si.getUserId(), si.getDeviceNo());
     }
 }

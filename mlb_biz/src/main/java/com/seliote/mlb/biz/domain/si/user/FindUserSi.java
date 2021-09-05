@@ -5,13 +5,13 @@ import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import lombok.Data;
 
 /**
- * 用户是否注册 SI
+ * 查找用户信息 SI
  *
  * @author seliote
  * @version 2021-08-22
  */
 @Data
-public class IsSignedUpSi {
+public class FindUserSi {
 
     // 国际电话区号
     @PhoneCode

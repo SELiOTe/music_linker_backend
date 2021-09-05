@@ -3,7 +3,7 @@ package com.seliote.mlb.api.domain.req.auth.mapper;
 import com.seliote.mlb.api.domain.req.auth.SignUpSmsReq;
 import com.seliote.mlb.biz.domain.si.common.CheckCaptchaSi;
 import com.seliote.mlb.biz.domain.si.common.SendSignUpSmsSi;
-import com.seliote.mlb.biz.domain.si.user.IsSignedUpSi;
+import com.seliote.mlb.biz.domain.si.user.FindUserSi;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -33,7 +33,7 @@ public interface SignUpSmsReqMapper {
      * @param req 发送注册验证码 Req
      * @return 用户是否注册 SI
      */
-    IsSignedUpSi toIsSignedUpSi(SignUpSmsReq req);
+    FindUserSi toIsSignedUpSi(SignUpSmsReq req);
 
     /**
      * 从发送注册验证码 Req 转为发送短信验证码 SI

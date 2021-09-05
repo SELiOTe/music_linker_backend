@@ -1,9 +1,11 @@
 package com.seliote.mlb.api.controller;
 
 import com.seliote.mlb.api.domain.req.auth.IsSignedUpReq;
+import com.seliote.mlb.api.domain.req.auth.IsTrustDeviceReq;
 import com.seliote.mlb.api.domain.req.auth.SignUpReq;
 import com.seliote.mlb.api.domain.req.auth.SignUpSmsReq;
 import com.seliote.mlb.api.domain.req.auth.mapper.IsSignedUpReqMapper;
+import com.seliote.mlb.api.domain.req.auth.mapper.IsTrustDeviceReqMapper;
 import com.seliote.mlb.api.domain.req.auth.mapper.SignUpReqMapper;
 import com.seliote.mlb.api.domain.req.auth.mapper.SignUpSmsReqMapper;
 import com.seliote.mlb.api.domain.resp.auth.CaptchaResp;
@@ -12,6 +14,7 @@ import com.seliote.mlb.api.domain.resp.auth.SignUpResp;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CaptchaRespMapper;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CountryListRespMapper;
 import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
+import com.seliote.mlb.biz.domain.si.user.IsTrustDeviceSi;
 import com.seliote.mlb.biz.service.CommonService;
 import com.seliote.mlb.biz.service.CountryService;
 import com.seliote.mlb.biz.service.UserService;
@@ -66,7 +69,8 @@ public class AuthController {
     @PostMapping("/is_signed_up")
     @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo")
     public Resp<Void> isSignedUp(@RequestBody @NotNull @Valid IsSignedUpReq req) {
-        if (userService.isSignedUp(IsSignedUpReqMapper.INSTANCE.toSi(req))) {
+        var so = userService.findUser(IsSignedUpReqMapper.INSTANCE.toSi(req));
+        if (so.isPresent()) {
             log.info("User {} had signed up", req);
             return Resp.resp(0, "had signed up");
         } else {
@@ -116,7 +120,8 @@ public class AuthController {
         }
         // 无论成功与否都删除验证码，防止验证码重放
         commonService.removeCaptcha(req.getUuid());
-        if (userService.isSignedUp(SignUpSmsReqMapper.INSTANCE.toIsSignedUpSi(req))) {
+        var user = userService.findUser(SignUpSmsReqMapper.INSTANCE.toIsSignedUpSi(req));
+        if (user.isPresent()) {
             log.info("Used {} had signed up when sign up", req);
             return Resp.resp(2, "user had signed up");
         }
@@ -161,5 +166,30 @@ public class AuthController {
             return Resp.resp(4, "can not create token for user");
         }
         return Resp.resp(SignUpResp.builder().token(token.get()).build());
+    }
+
+    /**
+     * 查询设备是否为对应帐号的受信任设备
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为受信任设备，1 为用户未找到，2 为非受信任设备
+     */
+    @Valid
+    @PostMapping("is_trust_device")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo")
+    public Resp<Void> isTrustDevice(@RequestBody @NotNull @Valid IsTrustDeviceReq req) {
+        var user = userService.findUser(IsTrustDeviceReqMapper.INSTANCE.toIsSignedUpSi(req));
+        if (user.isEmpty()) {
+            log.warn("User {} not exists when query trust device", req);
+            return Resp.resp(1, "user not found");
+        }
+        if (userService.isTrustDevice(IsTrustDeviceSi.builder()
+                .userId(user.get().getUserId()).deviceNo(req.getDeviceNo()).build())) {
+            log.info("Trust user device {}", req);
+            return Resp.resp(0, "trust device");
+        } else {
+            log.info("Not trust user device {}", req);
+            return Resp.resp(2, "not trust device");
+        }
     }
 }

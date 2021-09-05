@@ -1,8 +1,10 @@
 package com.seliote.mlb.biz.service;
 
 import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
-import com.seliote.mlb.biz.domain.si.user.IsSignedUpSi;
+import com.seliote.mlb.biz.domain.si.user.FindUserSi;
+import com.seliote.mlb.biz.domain.si.user.IsTrustDeviceSi;
 import com.seliote.mlb.biz.domain.si.user.SignUpSi;
+import com.seliote.mlb.biz.domain.so.user.FindUserSo;
 import com.seliote.mlb.biz.domain.so.user.SignUpSo;
 import org.springframework.validation.annotation.Validated;
 
@@ -23,9 +25,9 @@ public interface UserService {
      * 判断用户是否已注册
      *
      * @param si 请求 SI
-     * @return 已注册返回 true，否则返回 false
+     * @return 已注册返回对应 SO
      */
-    boolean isSignedUp(@NotNull @Valid IsSignedUpSi si);
+    Optional<FindUserSo> findUser(@NotNull @Valid FindUserSi si);
 
     /**
      * 普通用户注册
@@ -50,4 +52,12 @@ public interface UserService {
      * @return 创建成功返回 Token
      */
     Optional<String> createToken(@NotNull Long userId);
+
+    /**
+     * 判断是否为用户受信任设备
+     *
+     * @param si 请求 SI
+     * @return 信任时返回 true，否则返回 false
+     */
+    boolean isTrustDevice(@NotNull @Valid IsTrustDeviceSi si);
 }
