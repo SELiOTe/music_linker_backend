@@ -86,7 +86,7 @@ public class ApiAdvice {
     @ExceptionHandler({BindException.class})
     @ResponseBody
     public Resp<Void> handle(BindException exception) {
-        log.warn("Parameters bind exception {}, {}", exception.getClass().getCanonicalName(), exception.getMessage());
+        log.warn("Parameters bind exception", exception);
         return Resp.resp(PARAM_EXCEPTION_CODE, PARAM_EXCEPTION_MSG);
     }
 
@@ -99,7 +99,7 @@ public class ApiAdvice {
     @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseBody
     public Resp<Void> handle(HttpMessageNotReadableException exception) {
-        log.warn("Parameters not readable exception {}, {}", exception.getClass().getCanonicalName(), exception.getMessage());
+        log.warn("Parameters not readable exception", exception);
         return Resp.resp(PARAM_EXCEPTION_CODE, PARAM_EXCEPTION_MSG);
     }
 
@@ -112,7 +112,7 @@ public class ApiAdvice {
     @ExceptionHandler({MlbException.class})
     @ResponseBody
     public Resp<Void> handle(MlbException exception) {
-        log.warn("MLB system exception {}, {}", exception.getClass().getCanonicalName(), exception.getMessage());
+        log.warn("MLB system exception", exception);
         return Resp.resp(SYSTEM_UNKNOWN_EXCEPTION_CODE, SYSTEM_UNKNOWN_EXCEPTION_MSG);
     }
 
@@ -125,7 +125,7 @@ public class ApiAdvice {
     @ExceptionHandler({Exception.class})
     @ResponseBody
     public Resp<Void> handle(Exception exception) {
-        log.warn("Unknown exception {}, {}", exception.getClass().getCanonicalName(), exception.getMessage());
+        log.warn("Unknown exception", exception);
         return Resp.resp(UNKNOWN_EXCEPTION_CODE, UNKNOWN_EXCEPTION_MSG);
     }
 }
