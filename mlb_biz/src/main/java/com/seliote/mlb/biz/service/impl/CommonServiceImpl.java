@@ -46,7 +46,7 @@ public class CommonServiceImpl implements CommonService {
     private final RedisService redisService;
     private final CountryRepo countryRepo;
     // 图形验证码基大小
-    int CAPTCHA_BASE_SIZE = 200;
+    private final int CAPTCHA_BASE_SIZE = 200;
 
     @Autowired
     public CommonServiceImpl(RedisService redisService,

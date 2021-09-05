@@ -30,32 +30,32 @@ public class Resp<T> {
      * -30000 ~ -39999: 客户端异常，如接口请求频率过快
      */
     // 成功
-    public static Integer SUCCESS_CODE = 0;
-    public static String SUCCESS_MSG = "success";
+    public static final Integer SUCCESS_CODE = 0;
+    public static final String SUCCESS_MSG = "success";
     // 未知异常，未处理、未捕获
-    public static Integer UNKNOWN_EXCEPTION_CODE = -10000;
-    public static String UNKNOWN_EXCEPTION_MSG = "unknown error";
+    public static final Integer UNKNOWN_EXCEPTION_CODE = -10000;
+    public static final String UNKNOWN_EXCEPTION_MSG = "unknown error";
     // 404 not found
-    public static Integer NOT_FOUND_404_CODE = -11000;
-    public static String NOT_FOUND_404_MSG = "404 not fund";
+    public static final Integer NOT_FOUND_404_CODE = -11000;
+    public static final String NOT_FOUND_404_MSG = "404 not fund";
     // 请求参数异常
-    public static Integer PARAM_EXCEPTION_CODE = -12000;
-    public static String PARAM_EXCEPTION_MSG = "parameters incorrect";
+    public static final Integer PARAM_EXCEPTION_CODE = -12000;
+    public static final String PARAM_EXCEPTION_MSG = "parameters incorrect";
     // 认证与授权异常
-    public static Integer AUTH_EXCEPTION_CODE = -20000;
-    public static String AUTH_EXCEPTION_MSG = "authorization exception";
+    public static final Integer AUTH_EXCEPTION_CODE = -20000;
+    public static final String AUTH_EXCEPTION_MSG = "authorization exception";
     // 401 未授权
-    public static Integer UNAUTHORIZED_CODE = -21000;
-    public static String UNAUTHORIZED_MSG = "unauthorized";
+    public static final Integer UNAUTHORIZED_CODE = -21000;
+    public static final String UNAUTHORIZED_MSG = "unauthorized";
     // 403 禁止访问
-    public static Integer FORBIDDEN_CODE = -21100;
-    public static String FORBIDDEN_MSG = "forbidden";
+    public static final Integer FORBIDDEN_CODE = -21100;
+    public static final String FORBIDDEN_MSG = "forbidden";
     // 应用相关未知异常，未处理、未捕获
-    public static Integer SYSTEM_UNKNOWN_EXCEPTION_CODE = -30000;
-    public static String SYSTEM_UNKNOWN_EXCEPTION_MSG = "system unknown error";
+    public static final Integer SYSTEM_UNKNOWN_EXCEPTION_CODE = -30000;
+    public static final String SYSTEM_UNKNOWN_EXCEPTION_MSG = "system unknown error";
     // 接口频率超限
-    public static Integer ILLEGAL_FREQ_CODE = -31000;
-    public static String ILLEGAL_FREQ_MSG = "frequency check failed";
+    public static final Integer ILLEGAL_FREQ_CODE = -31000;
+    public static final String ILLEGAL_FREQ_MSG = "frequency check failed";
 
     // 响应码
     @JsonProperty("code")

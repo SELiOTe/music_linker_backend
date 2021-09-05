@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * 用户信任设备仓库
@@ -16,14 +15,6 @@ import java.util.List;
  */
 @Validated
 public interface TrustDeviceRepo extends JpaRepository<TrustDeviceEntity, Long> {
-
-    /**
-     * 根据用户 ID 查询用户受信任设备列表
-     *
-     * @param userId 用户 ID
-     * @return 用户受信任设备列表
-     */
-    List<TrustDeviceEntity> findByUserEntity_Id(@NotNull Long userId);
 
     /**
      * 根据用户 ID 与设备串号查询记录是否存在（是否为用户的受信任设备）
