@@ -1,13 +1,7 @@
 package com.seliote.mlb.api.controller;
 
-import com.seliote.mlb.api.domain.req.auth.IsSignedUpReq;
-import com.seliote.mlb.api.domain.req.auth.IsTrustDeviceReq;
-import com.seliote.mlb.api.domain.req.auth.SignUpReq;
-import com.seliote.mlb.api.domain.req.auth.SignUpSmsReq;
-import com.seliote.mlb.api.domain.req.auth.mapper.IsSignedUpReqMapper;
-import com.seliote.mlb.api.domain.req.auth.mapper.IsTrustDeviceReqMapper;
-import com.seliote.mlb.api.domain.req.auth.mapper.SignUpReqMapper;
-import com.seliote.mlb.api.domain.req.auth.mapper.SignUpSmsReqMapper;
+import com.seliote.mlb.api.domain.req.auth.*;
+import com.seliote.mlb.api.domain.req.auth.mapper.*;
 import com.seliote.mlb.api.domain.resp.auth.CaptchaResp;
 import com.seliote.mlb.api.domain.resp.auth.CountryListResp;
 import com.seliote.mlb.api.domain.resp.auth.SignUpResp;
@@ -31,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -111,7 +106,7 @@ public class AuthController {
      */
     @Valid
     @PostMapping("/sign_up_sms")
-    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 2)
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
     public Resp<Void> signUpSms(@RequestBody @NotNull @Valid SignUpSmsReq req) {
         if (!commonService.checkCaptcha(SignUpSmsReqMapper.INSTANCE.toCheckCaptchaSi(req))) {
             log.info("Incorrect captcha in send sign up sms, {}", req);
@@ -122,7 +117,7 @@ public class AuthController {
         commonService.removeCaptcha(req.getUuid());
         var user = userService.findUser(SignUpSmsReqMapper.INSTANCE.toIsSignedUpSi(req));
         if (user.isPresent()) {
-            log.info("Used {} had signed up when sign up", req);
+            log.warn("Used {} had signed up when sign up", req);
             return Resp.resp(2, "user had signed up");
         }
         if (!commonService.sendSignUpSms(SignUpSmsReqMapper.INSTANCE.toSendSmsSi(req))) {
@@ -175,7 +170,7 @@ public class AuthController {
      * @return 响应实体，0 为受信任设备，1 为用户未找到，2 为非受信任设备
      */
     @Valid
-    @PostMapping("is_trust_device")
+    @PostMapping("/is_trust_device")
     @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo")
     public Resp<Void> isTrustDevice(@RequestBody @NotNull @Valid IsTrustDeviceReq req) {
         var user = userService.findUser(IsTrustDeviceReqMapper.INSTANCE.toIsSignedUpSi(req));
@@ -191,5 +186,40 @@ public class AuthController {
             log.info("Not trust user device {}", req);
             return Resp.resp(2, "not trust device");
         }
+    }
+
+    /**
+     * 发送信任设备短信验证码
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为发送成功，1 为图形验证码错误，2 为用户未注册，3 为已是受信任设备，4 为短信发送失败
+     */
+    @Valid
+    @PostMapping("/trust_device_sms")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
+    public Resp<Void> trustDeviceSms(@RequestBody @NotNull @Valid TrustDeviceSmsReq req) {
+        if (!commonService.checkCaptcha(TrustDeviceSmsReqMapper.INSTANCE.toCheckCaptchaSi(req))) {
+            log.info("Incorrect captcha when send trust device sms, {}", req);
+            commonService.removeCaptcha(req.getUuid());
+            return Resp.resp(1, "captcha code incorrect");
+        }
+        // 无论成功与否都删除验证码，防止验证码重放
+        commonService.removeCaptcha(req.getUuid());
+        var user = userService.findUser(TrustDeviceSmsReqMapper.INSTANCE.toFindUserSi(req));
+        if (user.isEmpty()) {
+            log.warn("User {} not signed up when send trust device sms", req);
+            return Resp.resp(2, "user not signed up");
+        }
+        if (userService.isTrustDevice(IsTrustDeviceSi.builder()
+                .userId(user.get().getUserId()).deviceNo(req.getDeviceNo()).build())) {
+            log.info("Device had trusted, {}", req);
+            return Resp.resp(3, "device had trusted");
+        }
+        if (!commonService.sendTrustDeviceSms(TrustDeviceSmsReqMapper.INSTANCE.toSendTrustDeviceSmsSi(req))) {
+            log.warn("Send trust device sms failed, {}", req);
+            return Resp.resp(4, "send trust device sms failed");
+        }
+        log.info("Send trust device sms to {} success", req);
+        return Resp.resp();
     }
 }

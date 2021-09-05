@@ -1,9 +1,6 @@
 package com.seliote.mlb.biz.service;
 
-import com.seliote.mlb.biz.domain.si.common.CheckCaptchaSi;
-import com.seliote.mlb.biz.domain.si.common.CheckSignUpSmsSi;
-import com.seliote.mlb.biz.domain.si.common.RemoveSignUpSmsSi;
-import com.seliote.mlb.biz.domain.si.common.SendSignUpSmsSi;
+import com.seliote.mlb.biz.domain.si.common.*;
 import com.seliote.mlb.biz.domain.so.country.CaptchaSo;
 import com.seliote.mlb.common.jsr303.captcha.Uuid;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +40,7 @@ public interface CommonService {
      * @param si 请求 SI
      * @return 正确返回 true，否则返回 false
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean checkCaptcha(@NotNull @Valid CheckCaptchaSi si);
 
     /**
@@ -74,4 +72,12 @@ public interface CommonService {
      * @param si 请求 SI
      */
     void removeSignUpSms(@NotNull @Valid RemoveSignUpSmsSi si);
+
+    /**
+     * 发送信任设备短信验证码
+     *
+     * @param si 请求 SI
+     * @return 发送成功返回 true，否则返回 false
+     */
+    boolean sendTrustDeviceSms(@NotNull @Valid SendTrustDeviceSmsSi si);
 }

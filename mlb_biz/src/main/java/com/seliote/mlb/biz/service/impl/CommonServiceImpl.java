@@ -1,9 +1,6 @@
 package com.seliote.mlb.biz.service.impl;
 
-import com.seliote.mlb.biz.domain.si.common.CheckCaptchaSi;
-import com.seliote.mlb.biz.domain.si.common.CheckSignUpSmsSi;
-import com.seliote.mlb.biz.domain.si.common.RemoveSignUpSmsSi;
-import com.seliote.mlb.biz.domain.si.common.SendSignUpSmsSi;
+import com.seliote.mlb.biz.domain.si.common.*;
 import com.seliote.mlb.biz.domain.so.country.CaptchaSo;
 import com.seliote.mlb.biz.service.CommonService;
 import com.seliote.mlb.common.exception.UtilException;
@@ -86,12 +83,9 @@ public class CommonServiceImpl implements CommonService {
             log.error("Can not send sign up sms to {}, because phone code incorrect or telephone number incorrect", si);
             return false;
         }
-        var sb = new StringBuilder();
-        for (int i = 0; i < VERIFY_CODE_LEN; i++) {
-            sb.append(CommonUtils.getRandom().nextInt(10));
-        }
-        log.info("Send sign up verify code sms {} to +{}-{}", sb, si.getPhoneCode(), si.getTelNo());
-        redisService.set(Duration.ofMinutes(5), sb.toString(), getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
+        var verifyCode = getVerifyCode();
+        log.info("Send sign up verify code sms {} to +{}-{}", verifyCode, si.getPhoneCode(), si.getTelNo());
+        redisService.set(Duration.ofMinutes(5), verifyCode, getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
         return true;
     }
 
@@ -109,6 +103,34 @@ public class CommonServiceImpl implements CommonService {
         redisService.remove(getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
     }
 
+    @Override
+    public boolean sendTrustDeviceSms(SendTrustDeviceSmsSi si) {
+        var countryEntity = countryRepo.findByPhoneCode(si.getPhoneCode());
+        if (countryEntity.isEmpty() || !si.getTelNo().matches(countryEntity.get().getPhonePattern())) {
+            log.error("Can not send trust device sms to {}, because phone code incorrect or telephone number incorrect",
+                    si);
+            return false;
+        }
+        var verifyCode = getVerifyCode();
+        log.info("Send trust device verify code sms {} to +{}-{}", verifyCode, si.getPhoneCode(), si.getTelNo());
+        redisService.set(Duration.ofMinutes(5), verifyCode,
+                getTrustDeviceSmsRedisKey(si.getPhoneCode(), si.getTelNo(), si.getDeviceNo()));
+        return true;
+    }
+
+    /**
+     * 生成短信校验码随机串
+     *
+     * @return 短信校验码随机串
+     */
+    private String getVerifyCode() {
+        var sb = new StringBuilder();
+        for (int i = 0; i < VERIFY_CODE_LEN; i++) {
+            sb.append(CommonUtils.getRandom().nextInt(10));
+        }
+        return sb.toString();
+    }
+
     /**
      * 获取注册短信验证码 Redis 存储 Key 数组
      *
@@ -118,6 +140,20 @@ public class CommonServiceImpl implements CommonService {
      */
     private String[] getSignUpSmsRedisKey(@NonNull String phoneCode, @NonNull String telNo) {
         return new String[]{"sms", "sign_up", phoneCode, telNo};
+    }
+
+    /**
+     * 获取注册短信验证码 Redis 存储 Key 数组
+     *
+     * @param phoneCode 国际电话区号
+     * @param telNo     手机号码
+     * @param deviceNo  设备码
+     * @return 注册短信验证码 Redis 存储 Key 数组
+     */
+    private String[] getTrustDeviceSmsRedisKey(@NonNull String phoneCode,
+                                               @NonNull String telNo,
+                                               @NonNull String deviceNo) {
+        return new String[]{"sms", "trust_device", phoneCode, telNo, deviceNo};
     }
 
     /**

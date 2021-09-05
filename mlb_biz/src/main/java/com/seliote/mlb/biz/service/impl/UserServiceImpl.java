@@ -72,6 +72,7 @@ public class UserServiceImpl implements UserService {
         this.jwsService = jwsService;
     }
 
+    @Transactional
     @Override
     public Optional<FindUserSo> findUser(FindUserSi si) {
         var userEntity =
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<SignUpSo> signUp(SignUpSi si) {
         var countryEntity = countryRepo.findByPhoneCode(si.getPhoneCode());
-        if (countryEntity.isEmpty()) {
+        if (countryEntity.isEmpty() || !si.getTelNo().matches(countryEntity.get().getPhonePattern())) {
             log.error("Error sign up, because phone code {} incorrect for {}", si.getPhoneCode(), si);
             return Optional.empty();
         }
