@@ -4,10 +4,7 @@ import com.seliote.mlb.auth.config.JwsFilter;
 import com.seliote.mlb.auth.domain.JwsPayload;
 import com.seliote.mlb.auth.domain.Role;
 import com.seliote.mlb.auth.service.JwsService;
-import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
-import com.seliote.mlb.biz.domain.si.user.FindUserSi;
-import com.seliote.mlb.biz.domain.si.user.IsTrustDeviceSi;
-import com.seliote.mlb.biz.domain.si.user.SignUpSi;
+import com.seliote.mlb.biz.domain.si.user.*;
 import com.seliote.mlb.biz.domain.so.user.FindUserSo;
 import com.seliote.mlb.biz.domain.so.user.SignUpSo;
 import com.seliote.mlb.biz.domain.so.user.mapper.FindUserSoMapper;
@@ -26,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
@@ -109,6 +106,7 @@ public class UserServiceImpl implements UserService {
         return Optional.of(SignUpSoMapper.INSTANCE.fromUserEntity(userEntity));
     }
 
+    @Transactional
     @Override
     public boolean addTrustDevice(AddTrustDeviceSi si) {
         var userEntity = userRepo.findById(si.getUserId());
@@ -155,5 +153,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isTrustDevice(IsTrustDeviceSi si) {
         return trustDeviceRepo.existsByUserEntity_IdAndDeviceNo(si.getUserId(), si.getDeviceNo());
+    }
+
+    @Override
+    public boolean checkUserPassword(CheckUserPasswordSi si) {
+        var user = userRepo.findByCountryEntity_PhoneCodeAndTelNo(si.getPhoneCode(), si.getTelNo());
+        if (user.isEmpty()) {
+            return false;
+        }
+        var match = passwordEncoder.matches(si.getPassword(), user.get().getPassword());
+        log.info("Compare password {}, result {}", si, match);
+        return match;
     }
 }

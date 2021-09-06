@@ -80,4 +80,19 @@ public interface CommonService {
      * @return 发送成功返回 true，否则返回 false
      */
     boolean sendTrustDeviceSms(@NotNull @Valid SendTrustDeviceSmsSi si);
+
+    /**
+     * 校验信任设备短信验证码
+     *
+     * @param si 请求 SI
+     * @return 校验成功返回 true，否则返回 false
+     */
+    boolean checkTrustDeviceSms(@NotNull @Valid CheckTrustDeviceSmsSi si);
+
+    /**
+     * 移除信任设备短信验证码
+     *
+     * @param si 请求 SI
+     */
+    void removeTrustDeviceSms(@NotNull @Valid RemoveTrustDeviceSmsSi si);
 }

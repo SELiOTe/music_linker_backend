@@ -92,10 +92,7 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public boolean checkSignUpSms(CheckSignUpSmsSi si) {
         var verifyCode = redisService.get(getSignUpSmsRedisKey(si.getPhoneCode(), si.getTelNo()));
-        if (verifyCode.isEmpty()) {
-            return false;
-        }
-        return verifyCode.get().equalsIgnoreCase(si.getVerifyCode());
+        return verifyCode.isPresent() && verifyCode.get().equalsIgnoreCase(si.getVerifyCode());
     }
 
     @Override
@@ -116,6 +113,18 @@ public class CommonServiceImpl implements CommonService {
         redisService.set(Duration.ofMinutes(5), verifyCode,
                 getTrustDeviceSmsRedisKey(si.getPhoneCode(), si.getTelNo(), si.getDeviceNo()));
         return true;
+    }
+
+    @Override
+    public boolean checkTrustDeviceSms(CheckTrustDeviceSmsSi si) {
+        var verifyCode = redisService.get(
+                getTrustDeviceSmsRedisKey(si.getPhoneCode(), si.getTelNo(), si.getDeviceNo()));
+        return verifyCode.isPresent() && verifyCode.get().equalsIgnoreCase(si.getVerifyCode());
+    }
+
+    @Override
+    public void removeTrustDeviceSms(RemoveTrustDeviceSmsSi si) {
+        redisService.remove(getTrustDeviceSmsRedisKey(si.getPhoneCode(), si.getTelNo(), si.getDeviceNo()));
     }
 
     /**

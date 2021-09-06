@@ -1,9 +1,6 @@
 package com.seliote.mlb.biz.service;
 
-import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
-import com.seliote.mlb.biz.domain.si.user.FindUserSi;
-import com.seliote.mlb.biz.domain.si.user.IsTrustDeviceSi;
-import com.seliote.mlb.biz.domain.si.user.SignUpSi;
+import com.seliote.mlb.biz.domain.si.user.*;
 import com.seliote.mlb.biz.domain.so.user.FindUserSo;
 import com.seliote.mlb.biz.domain.so.user.SignUpSo;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +40,7 @@ public interface UserService {
      * @param si 请求 SI
      * @return 添加成功返回 true，否则返回 false
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean addTrustDevice(@NotNull @Valid AddTrustDeviceSi si);
 
     /**
@@ -60,4 +58,12 @@ public interface UserService {
      * @return 信任时返回 true，否则返回 false
      */
     boolean isTrustDevice(@NotNull @Valid IsTrustDeviceSi si);
+
+    /**
+     * 校验用户密码
+     *
+     * @param si 请求 SI
+     * @return 校验成功返回 true，否则返回 false
+     */
+    boolean checkUserPassword(@NotNull @Valid CheckUserPasswordSi si);
 }

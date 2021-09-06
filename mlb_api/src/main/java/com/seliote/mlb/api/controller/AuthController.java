@@ -5,6 +5,7 @@ import com.seliote.mlb.api.domain.req.auth.mapper.*;
 import com.seliote.mlb.api.domain.resp.auth.CaptchaResp;
 import com.seliote.mlb.api.domain.resp.auth.CountryListResp;
 import com.seliote.mlb.api.domain.resp.auth.SignUpResp;
+import com.seliote.mlb.api.domain.resp.auth.TrustlessDeviceLoginResp;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CaptchaRespMapper;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CountryListRespMapper;
 import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
@@ -137,7 +138,7 @@ public class AuthController {
      */
     @Valid
     @PostMapping("/sign_up")
-    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 2)
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
     public Resp<SignUpResp> signUp(@RequestBody @NotNull @Valid SignUpReq req) {
         if (!commonService.checkSignUpSms(SignUpReqMapper.INSTANCE.toCheckSignUpSmsSi(req))) {
             log.info("Failed check sign up verify code, {}", req);
@@ -221,5 +222,49 @@ public class AuthController {
         }
         log.info("Send trust device sms to {} success", req);
         return Resp.resp();
+    }
+
+    /**
+     * 不受信设备登录
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为登录成功会同时返回鉴权 Token，1 为短信验证码不正确，2 为帐号或密码错误
+     * 3 为添加受信任设备失败，4 为获取登录 Token 失败
+     */
+    @Valid
+    @PostMapping("/trustless_device_login")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
+    public Resp<TrustlessDeviceLoginResp> trustlessDeviceLogin(
+            @RequestBody @NotNull @Valid TrustlessDeviceLoginReq req) {
+        // 校验短信验证码
+        if (!commonService.checkTrustDeviceSms(TrustlessDeviceLoginReqMapper.INSTANCE.toCheckTrustDeviceSmsSi(req))) {
+            log.info("Failed check trustless device login verify code, {}", req);
+            return Resp.resp(1, "verify code incorrect");
+        }
+        // 成功后删除验证码，防止重放
+        commonService.removeTrustDeviceSms(TrustlessDeviceLoginReqMapper.INSTANCE.toRemoveTrustDeviceSmsSi(req));
+        // 校验用户是否存在
+        var user = userService.findUser(TrustlessDeviceLoginReqMapper.INSTANCE.toFindUserSi(req));
+        if (user.isEmpty()) {
+            log.info("{} login failed, user not exists", req);
+            return Resp.resp(2, "login failed");
+        }
+        if (!userService.checkUserPassword(TrustlessDeviceLoginReqMapper.INSTANCE.toCheckUserPasswordSi(req))) {
+            log.info("{} login failed, password incorrect", req);
+            return Resp.resp(2, "login failed");
+        }
+        // 添加受信任设备
+        if (!userService.addTrustDevice(AddTrustDeviceSi.builder()
+                .userId(user.get().getUserId()).deviceNo(req.getDeviceNo()).build())) {
+            log.error("User {} login success, but can not add trust device", user.get());
+            return Resp.resp(3, "add trust device failed");
+        }
+        // 创建 Token
+        var token = userService.createToken(user.get().getUserId());
+        if (token.isEmpty()) {
+            log.error("Failed create token for {} when login", user);
+            return Resp.resp(4, "can not create token for user");
+        }
+        return Resp.resp(TrustlessDeviceLoginResp.builder().token(token.get()).build());
     }
 }
