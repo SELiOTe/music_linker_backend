@@ -1,6 +1,7 @@
 package com.seliote.mlb.biz.domain.si.user;
 
 import com.seliote.mlb.common.jsr303.phone.PhoneCode;
+import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.PlaintextPassword;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import lombok.Data;
@@ -27,4 +28,8 @@ public class SignUpSi {
     @ToString.Exclude
     @PlaintextPassword
     private String password;
+
+    // 用户昵称
+    @Nickname
+    private String nickname;
 }

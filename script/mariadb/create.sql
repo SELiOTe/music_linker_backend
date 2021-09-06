@@ -32,6 +32,7 @@ CREATE TABLE user
     tel_no             VARCHAR(15) NOT NULL COMMENT 'user telephone number',
     password           CHAR(60)    NOT NULL COMMENT 'user login password with bCrypt',
     enable             BOOLEAN     NOT NULL DEFAULT TRUE COMMENT 'user account is enable or not',
+    nickname           VARCHAR(16) NOT NULL COMMENT 'user nickname',
     created_date       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
     last_modified_date TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
     PRIMARY KEY pk_i (id) COMMENT 'row primary key',

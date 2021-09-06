@@ -1,5 +1,6 @@
 package com.seliote.mlb.dao.entity;
 
+import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import com.seliote.mlb.dao.AuditingEntity;
 
@@ -32,6 +33,9 @@ public class UserEntity extends AuditingEntity {
 
     // 用户账户是否启用
     private Boolean enable;
+
+    // 用户昵称
+    private String nickname;
 
     // 用户角色
     private Set<RoleEntity> roles;
@@ -76,6 +80,16 @@ public class UserEntity extends AuditingEntity {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
+    }
+
+    @Nickname
+    @Column(name = "nickname")
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @NotEmpty

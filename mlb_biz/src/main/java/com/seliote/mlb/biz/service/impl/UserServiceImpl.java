@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setTelNo(si.getTelNo());
         userEntity.setPassword(passwordEncoder.encode(si.getPassword()));
         userEntity.setEnable(true);
+        userEntity.setNickname(si.getNickname());
         userEntity.setRoles(new HashSet<>(List.of(roleEntity.get())));
         userRepo.save(userEntity);
         log.info("Sign up success, {}", si);

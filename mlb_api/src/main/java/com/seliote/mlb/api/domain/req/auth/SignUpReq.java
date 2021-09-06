@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seliote.mlb.common.jsr303.phone.PhoneCode;
 import com.seliote.mlb.common.jsr303.phone.VerifyCode;
 import com.seliote.mlb.common.jsr303.userinfo.DeviceNo;
+import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.PlaintextPassword;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import lombok.Data;
@@ -43,4 +44,9 @@ public class SignUpReq {
     @JsonProperty("device_no")
     @DeviceNo
     private String deviceNo;
+
+    // 用户昵称
+    @JsonProperty("nickname")
+    @Nickname
+    private String nickname;
 }
