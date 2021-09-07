@@ -113,7 +113,7 @@ public class AuthController {
         }
         // 无论成功与否都删除验证码，防止验证码重放
         commonService.removeCaptcha(req.getUuid());
-        var user = userService.findUser(SignUpSmsReqMapper.INSTANCE.toIsSignedUpSi(req));
+        var user = userService.findUser(SignUpSmsReqMapper.INSTANCE.toFindUserSi(req));
         if (user.isPresent()) {
             log.warn("Used {} had signed up when sign up", req);
             return Resp.resp(2, "user had signed up");
@@ -295,5 +295,35 @@ public class AuthController {
             return Resp.resp(3, "can not create token for user");
         }
         return Resp.resp(TrustDeviceLoginResp.builder().token(token.get()).build());
+    }
+
+    /**
+     * 发送重置密码短信验证码
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为发送成功，1 为图片验证码错误，2 为用户未注册，3 为发送短信验证码失败
+     */
+    @Valid
+    @PostMapping("/reset_password_sms")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
+    public Resp<Void> resetPasswordSms(@RequestBody @NotNull @Valid ResetPasswordSmsReq req) {
+        if (!commonService.checkCaptcha(ResetPasswordSmsReqMapper.INSTANCE.toCheckCaptchaSi(req))) {
+            log.info("Incorrect captcha in reset password sms, {}", req);
+            commonService.removeCaptcha(req.getUuid());
+            return Resp.resp(1, "captcha code incorrect");
+        }
+        // 无论成功与否都删除验证码，防止验证码重放
+        commonService.removeCaptcha(req.getUuid());
+        var user = userService.findUser(ResetPasswordSmsReqMapper.INSTANCE.toFindUserSi(req));
+        if (user.isEmpty()) {
+            log.warn("Used {} had not signed up when reset password", req);
+            return Resp.resp(2, "user had not signed up");
+        }
+        if (!commonService.sendResetPasswordSms(ResetPasswordSmsReqMapper.INSTANCE.toSendResetPasswordSmsSi(req))) {
+            log.warn("Send reset password sms failed, {}", req);
+            return Resp.resp(3, "send reset password verify code sms failed");
+        }
+        log.info("Send reset password sms to {} success", req);
+        return Resp.resp();
     }
 }

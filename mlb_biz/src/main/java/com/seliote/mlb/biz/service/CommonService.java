@@ -95,4 +95,12 @@ public interface CommonService {
      * @param si 请求 SI
      */
     void removeTrustDeviceSms(@NotNull @Valid RemoveTrustDeviceSmsSi si);
+
+    /**
+     * 发送重置密码短信
+     *
+     * @param si 请求 SI
+     * @return 发送成功返回 true，否则返回 false
+     */
+    boolean sendResetPasswordSms(@NotNull @Valid SendResetPasswordSmsSi si);
 }

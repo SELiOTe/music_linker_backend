@@ -127,6 +127,21 @@ public class CommonServiceImpl implements CommonService {
         redisService.remove(getTrustDeviceSmsRedisKey(si.getPhoneCode(), si.getTelNo(), si.getDeviceNo()));
     }
 
+    @Override
+    public boolean sendResetPasswordSms(SendResetPasswordSmsSi si) {
+        var countryEntity = countryRepo.findByPhoneCode(si.getPhoneCode());
+        if (countryEntity.isEmpty() || !si.getTelNo().matches(countryEntity.get().getPhonePattern())) {
+            log.error("Can not send rest password sms to {}, " +
+                    "because phone code incorrect or telephone number incorrect", si);
+            return false;
+        }
+        var verifyCode = getVerifyCode();
+        log.info("Send rest password verify code sms {} to +{}-{}", verifyCode, si.getPhoneCode(), si.getTelNo());
+        redisService.set(Duration.ofMinutes(5), verifyCode,
+                getResetPasswordSms(si.getPhoneCode(), si.getTelNo()));
+        return true;
+    }
+
     /**
      * 生成短信校验码随机串
      *
@@ -163,6 +178,18 @@ public class CommonServiceImpl implements CommonService {
                                                @NonNull String telNo,
                                                @NonNull String deviceNo) {
         return new String[]{"sms", "trust_device", phoneCode, telNo, deviceNo};
+    }
+
+    /**
+     * 获取重置密码短信验证码 Redis 存储 Key 数组
+     *
+     * @param phoneCode 国际电话区号
+     * @param telNo     手机号码
+     * @return 重置密码短信验证码 Redis 存储 Key 数组
+     */
+    private String[] getResetPasswordSms(@NonNull String phoneCode,
+                                         @NonNull String telNo) {
+        return new String[]{"sms", "reset_password", phoneCode, telNo};
     }
 
     /**

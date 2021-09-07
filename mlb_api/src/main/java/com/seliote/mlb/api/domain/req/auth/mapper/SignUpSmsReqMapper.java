@@ -33,7 +33,7 @@ public interface SignUpSmsReqMapper {
      * @param req 发送注册验证码 Req
      * @return 用户是否注册 SI
      */
-    FindUserSi toIsSignedUpSi(SignUpSmsReq req);
+    FindUserSi toFindUserSi(SignUpSmsReq req);
 
     /**
      * 从发送注册验证码 Req 转为发送短信验证码 SI
