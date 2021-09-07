@@ -2,6 +2,7 @@ package com.seliote.mlb.auth.domain;
 
 import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
 import com.seliote.mlb.common.exception.AuthException;
+import com.seliote.mlb.common.jsr303.userinfo.RoleName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ import org.springframework.util.StringUtils;
 @Builder
 public class Role implements GrantedAuthority {
 
+    @RoleName
     private String authority;
 
     @Override

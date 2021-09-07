@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.security.Principal;
@@ -51,6 +52,7 @@ public class JwsPayload implements Principal {
     // 账户权限
     @JsonProperty("roles")
     @NotEmpty
+    @Valid
     private Collection<Role> roles;
 
     @JsonIgnore
