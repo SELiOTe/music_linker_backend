@@ -2,10 +2,7 @@ package com.seliote.mlb.api.controller;
 
 import com.seliote.mlb.api.domain.req.auth.*;
 import com.seliote.mlb.api.domain.req.auth.mapper.*;
-import com.seliote.mlb.api.domain.resp.auth.CaptchaResp;
-import com.seliote.mlb.api.domain.resp.auth.CountryListResp;
-import com.seliote.mlb.api.domain.resp.auth.SignUpResp;
-import com.seliote.mlb.api.domain.resp.auth.TrustlessDeviceLoginResp;
+import com.seliote.mlb.api.domain.resp.auth.*;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CaptchaRespMapper;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CountryListRespMapper;
 import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
@@ -241,12 +238,10 @@ public class AuthController {
             log.info("Failed check trustless device login verify code, {}", req);
             return Resp.resp(1, "verify code incorrect");
         }
-        // 成功后删除验证码，防止重放
-        commonService.removeTrustDeviceSms(TrustlessDeviceLoginReqMapper.INSTANCE.toRemoveTrustDeviceSmsSi(req));
         // 校验用户是否存在
         var user = userService.findUser(TrustlessDeviceLoginReqMapper.INSTANCE.toFindUserSi(req));
         if (user.isEmpty()) {
-            log.info("{} login failed, user not exists", req);
+            log.warn("{} login failed, user not exists", req);
             return Resp.resp(2, "login failed");
         }
         if (!userService.checkUserPassword(TrustlessDeviceLoginReqMapper.INSTANCE.toCheckUserPasswordSi(req))) {
@@ -265,6 +260,40 @@ public class AuthController {
             log.error("Failed create token for {} when login", user);
             return Resp.resp(4, "can not create token for user");
         }
+        // 成功后删除验证码，防止重放
+        commonService.removeTrustDeviceSms(TrustlessDeviceLoginReqMapper.INSTANCE.toRemoveTrustDeviceSmsSi(req));
         return Resp.resp(TrustlessDeviceLoginResp.builder().token(token.get()).build());
+    }
+
+    /**
+     * 受信设备登录
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为登录成功会同时返回鉴权 Token，1 为帐号或密码错误，2 为非受信任设备
+     * 3 为获取登录 Token 失败
+     */
+    @Valid
+    @PostMapping("/trust_device_login")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
+    public Resp<TrustDeviceLoginResp> trustDeviceLogin(@RequestBody @NotNull @Valid TrustDeviceLoginReq req) {
+        var user = userService.findUser(TrustDeviceLoginReqMapper.INSTANCE.toFindUserSi(req));
+        if (user.isEmpty()) {
+            log.warn("{} not exists when login", req);
+            return Resp.resp(1, "login failed");
+        }
+        if (!userService.isTrustDevice(IsTrustDeviceSi.builder()
+                .userId(user.get().getUserId()).deviceNo(req.getDeviceNo()).build())) {
+            return Resp.resp(2, "not in trust device");
+        }
+        if (!userService.checkUserPassword(TrustDeviceLoginReqMapper.INSTANCE.toCheckUserPasswordSi(req))) {
+            log.info("{} password incorrect when login", req);
+            return Resp.resp(1, "login failed");
+        }
+        var token = userService.createToken(user.get().getUserId());
+        if (token.isEmpty()) {
+            log.error("Failed create token for {} when login", user);
+            return Resp.resp(3, "can not create token for user");
+        }
+        return Resp.resp(TrustDeviceLoginResp.builder().token(token.get()).build());
     }
 }
