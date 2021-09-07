@@ -12,6 +12,7 @@ import com.seliote.mlb.biz.domain.so.user.mapper.SignUpSoMapper;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.YmlConfig;
 import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
+import com.seliote.mlb.common.exception.MlbException;
 import com.seliote.mlb.common.service.RedisService;
 import com.seliote.mlb.dao.entity.TrustDeviceEntity;
 import com.seliote.mlb.dao.entity.UserEntity;
@@ -165,5 +166,17 @@ public class UserServiceImpl implements UserService {
         var match = passwordEncoder.matches(si.getPassword(), user.get().getPassword());
         log.info("Compare password {}, result {}", si, match);
         return match;
+    }
+
+    @Transactional
+    @Override
+    public void resetPassword(ResetPasswordSi si) {
+        var user = userRepo.findById(si.getUserId());
+        if (user.isEmpty()) {
+            log.error("User {} not exists when reset password", si);
+            throw new MlbException("Can not update");
+        }
+        user.get().setPassword(passwordEncoder.encode(si.getPassword()));
+        userRepo.save(user.get());
     }
 }

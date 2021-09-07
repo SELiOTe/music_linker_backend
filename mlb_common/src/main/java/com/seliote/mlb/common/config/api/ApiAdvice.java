@@ -73,7 +73,7 @@ public class ApiAdvice {
     @ExceptionHandler({FreqException.class})
     @ResponseBody
     public Resp<Void> handle(FreqException exception) {
-        log.warn("Frequency check exception {}, {}", exception.getClass().getCanonicalName(), exception.getMessage());
+        log.warn("Frequency check exception, {}", exception.getMessage());
         return Resp.resp(ILLEGAL_FREQ_CODE, ILLEGAL_FREQ_MSG);
     }
 

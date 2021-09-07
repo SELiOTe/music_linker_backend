@@ -65,5 +65,13 @@ public interface UserService {
      * @param si 请求 SI
      * @return 校验成功返回 true，否则返回 false
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean checkUserPassword(@NotNull @Valid CheckUserPasswordSi si);
+
+    /**
+     * 重置用户密码
+     *
+     * @param si 请求 SI
+     */
+    void resetPassword(@NotNull @Valid ResetPasswordSi si);
 }

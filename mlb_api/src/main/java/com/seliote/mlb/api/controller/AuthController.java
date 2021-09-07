@@ -7,6 +7,7 @@ import com.seliote.mlb.api.domain.resp.auth.mapper.CaptchaRespMapper;
 import com.seliote.mlb.api.domain.resp.auth.mapper.CountryListRespMapper;
 import com.seliote.mlb.biz.domain.si.user.AddTrustDeviceSi;
 import com.seliote.mlb.biz.domain.si.user.IsTrustDeviceSi;
+import com.seliote.mlb.biz.domain.si.user.ResetPasswordSi;
 import com.seliote.mlb.biz.service.CommonService;
 import com.seliote.mlb.biz.service.CountryService;
 import com.seliote.mlb.biz.service.UserService;
@@ -325,5 +326,47 @@ public class AuthController {
         }
         log.info("Send reset password sms to {} success", req);
         return Resp.resp();
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param req 请求实体
+     * @return 响应实体，0 为重置成功并会返回登录 Token，1 为短信验证码校验失败，2 为用户尚未注册，3 为添加信任设备失败，
+     * 4 为创建 Token 失败
+     */
+    @Valid
+    @PostMapping("/reset_password")
+    @ApiFreq(type = ApiFreqType.BODY, keys = "phoneCode,telNo", freq = 10, unit = ChronoUnit.DAYS)
+    public Resp<ResetPasswordResp> resetPassword(@RequestBody @NotNull @Valid ResetPasswordReq req) {
+        if (!commonService.checkResetPasswordSms(ResetPasswordReqMapper.INSTANCE.toCheckResetPasswordSmsSi(req))) {
+            log.info("Failed check reset password verify code, {}", req);
+            return Resp.resp(1, "verify code incorrect");
+        }
+        // 校验用户是否存在
+        var user = userService.findUser(ResetPasswordReqMapper.INSTANCE.toFindUserSi(req));
+        if (user.isEmpty()) {
+            log.warn("{} reset password failed, user not exists", req);
+            return Resp.resp(2, "user had not signed up");
+        }
+        // 不是受信任设备就添加
+        if (!userService.isTrustDevice(IsTrustDeviceSi.builder()
+                .userId(user.get().getUserId()).deviceNo(req.getDeviceNo()).build())
+                && !userService.addTrustDevice(AddTrustDeviceSi.builder()
+                .userId(user.get().getUserId()).deviceNo(req.getDeviceNo()).build())) {
+            log.error("{} add trust device failed when reset password", req);
+            return Resp.resp(3, "add trust device failed");
+        }
+        // 重置密码
+        userService.resetPassword(
+                ResetPasswordSi.builder().userId(user.get().getUserId()).password(req.getPassword()).build());
+        commonService.removeResetPasswordSms(ResetPasswordReqMapper.INSTANCE.toRemoveResetPasswordSmsSi(req));
+        // 创建一个 Token
+        var token = userService.createToken(user.get().getUserId());
+        if (token.isEmpty()) {
+            log.error("Failed create token for {} when reset password", user);
+            return Resp.resp(4, "can not create token for user");
+        }
+        return Resp.resp(ResetPasswordResp.builder().token(token.get()).build());
     }
 }

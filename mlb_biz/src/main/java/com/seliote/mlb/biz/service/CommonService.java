@@ -97,10 +97,25 @@ public interface CommonService {
     void removeTrustDeviceSms(@NotNull @Valid RemoveTrustDeviceSmsSi si);
 
     /**
-     * 发送重置密码短信
+     * 发送重置密码短信验证码
      *
      * @param si 请求 SI
      * @return 发送成功返回 true，否则返回 false
      */
     boolean sendResetPasswordSms(@NotNull @Valid SendResetPasswordSmsSi si);
+
+    /**
+     * 校验重置密码短信验证码
+     *
+     * @param si 请求 SI
+     * @return 校验成功返回 true，否则返回 false
+     */
+    boolean checkResetPasswordSms(@NotNull @Valid CheckResetPasswordSmsSi si);
+
+    /**
+     * 移除重置密码短信验证码
+     *
+     * @param si 请求 SI
+     */
+    void removeResetPasswordSms(@NotNull @Valid RemoveResetPasswordSmsSi si);
 }

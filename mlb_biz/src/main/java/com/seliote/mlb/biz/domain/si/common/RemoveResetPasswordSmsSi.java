@@ -5,13 +5,13 @@ import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import lombok.Data;
 
 /**
- * 发送重置密码短信验证码 SI
+ * 移除重置密码短信验证码 SI
  *
  * @author seliote
  * @version 2021-09-02
  */
 @Data
-public class SendResetPasswordSmsSi {
+public class RemoveResetPasswordSmsSi {
 
     // 国际电话区号
     @PhoneCode

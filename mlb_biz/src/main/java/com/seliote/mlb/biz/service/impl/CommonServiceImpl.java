@@ -142,6 +142,18 @@ public class CommonServiceImpl implements CommonService {
         return true;
     }
 
+    @Override
+    public boolean checkResetPasswordSms(CheckResetPasswordSmsSi si) {
+        var verifyCode = redisService.get(
+                getResetPasswordSms(si.getPhoneCode(), si.getTelNo()));
+        return verifyCode.isPresent() && verifyCode.get().equalsIgnoreCase(si.getVerifyCode());
+    }
+
+    @Override
+    public void removeResetPasswordSms(RemoveResetPasswordSmsSi si) {
+        redisService.remove(getResetPasswordSms(si.getPhoneCode(), si.getTelNo()));
+    }
+
     /**
      * 生成短信校验码随机串
      *
