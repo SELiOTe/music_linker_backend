@@ -1,16 +1,12 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
-import com.seliote.mlb.common.config.YmlConfig;
-import com.seliote.mlb.common.exception.MlbException;
 import com.seliote.mlb.common.jsr303.minio.Catalog;
+import com.seliote.mlb.common.service.CommonService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -23,31 +19,18 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 public class CatalogValidator implements ConstraintValidator<Catalog, String> {
 
-    private final YmlConfig.Minio minio;
+    private final CommonService commonService;
 
     private final Set<String> catalogSet = new CopyOnWriteArraySet<>();
 
     @Autowired
-    public CatalogValidator(YmlConfig ymlConfig) {
-        this.minio = ymlConfig.getMinio();
+    public CatalogValidator(CommonService commonService) {
+        this.commonService = commonService;
     }
 
     @Override
     public void initialize(Catalog constraintAnnotation) {
-        var properties = BeanUtils.getPropertyDescriptors(minio.getCatalog().getClass());
-        for (PropertyDescriptor pd : properties) {
-            if (pd.getName().equals("class")) {
-                continue;
-            }
-            try {
-                var catalog = pd.getReadMethod().invoke(minio.getCatalog()).toString();
-                log.trace("Add {} as catalog to Minio JSR 303", catalog);
-                catalogSet.add(catalog);
-            } catch (IllegalAccessException | InvocationTargetException exception) {
-                log.error("Failed initialization CatalogValidator, {}", exception.getMessage());
-                throw new MlbException(exception);
-            }
-        }
+        catalogSet.addAll(commonService.minioSupportCatalog());
     }
 
     @Override

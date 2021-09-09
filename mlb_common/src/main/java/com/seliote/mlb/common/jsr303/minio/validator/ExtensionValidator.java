@@ -1,16 +1,12 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
-import com.seliote.mlb.common.config.YmlConfig;
-import com.seliote.mlb.common.exception.MlbException;
-import com.seliote.mlb.common.jsr303.minio.Catalog;
+import com.seliote.mlb.common.jsr303.minio.Extension;
+import com.seliote.mlb.common.service.CommonService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -21,33 +17,20 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @version 2021-07-02
  */
 @Slf4j
-public class ExtensionValidator implements ConstraintValidator<Catalog, String> {
+public class ExtensionValidator implements ConstraintValidator<Extension, String> {
 
-    private final YmlConfig.Minio minio;
+    private final CommonService commonService;
 
     private final Set<String> extensionSet = new CopyOnWriteArraySet<>();
 
     @Autowired
-    public ExtensionValidator(YmlConfig ymlConfig) {
-        this.minio = ymlConfig.getMinio();
+    public ExtensionValidator(CommonService commonService) {
+        this.commonService = commonService;
     }
 
     @Override
-    public void initialize(Catalog constraintAnnotation) {
-        var properties = BeanUtils.getPropertyDescriptors(minio.getExtension().getClass());
-        for (PropertyDescriptor pd : properties) {
-            if (pd.getName().equals("class")) {
-                continue;
-            }
-            try {
-                var extension = pd.getReadMethod().invoke(minio.getExtension()).toString();
-                log.trace("Add {} as extension to Minio JSR 303", extension);
-                extensionSet.add(extension);
-            } catch (IllegalAccessException | InvocationTargetException exception) {
-                log.error("Failed initialization ExtensionValidator, {}", exception.getMessage());
-                throw new MlbException(exception);
-            }
-        }
+    public void initialize(Extension constraintAnnotation) {
+        extensionSet.addAll(commonService.minioSupportExtension());
     }
 
     @Override

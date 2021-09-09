@@ -59,17 +59,17 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public InputStream download(String filename) throws MinioException {
+    public InputStream download(String path) throws MinioException {
         try {
             var inputStream = minioClient.getObject(GetObjectArgs.builder()
                     .bucket(minio.getBucket())
-                    .object(filename)
+                    .object(path)
                     .build());
-            log.info("Download file {}", filename);
+            log.info("Download file {}", path);
             return inputStream;
         } catch (io.minio.errors.MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException
                 exception) {
-            log.info("Failed download file {}, {}", filename, exception.getMessage());
+            log.info("Failed download file {}, {}", path, exception.getMessage());
             throw new MinioException(exception);
         }
     }
