@@ -42,6 +42,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final String defaultUserAvatar;
     private final RedisService redisService;
     private final PasswordEncoder passwordEncoder;
     private final YmlConfig.Jws jwsConfig;
@@ -60,6 +61,7 @@ public class UserServiceImpl implements UserService {
                            RoleRepo roleRepo,
                            TrustDeviceRepo trustDeviceRepo,
                            JwsService jwsService) {
+        this.defaultUserAvatar = ymlConfig.getDefaultUserAvatar();
         this.redisService = redisService;
         this.passwordEncoder = passwordEncoder;
         this.jwsConfig = ymlConfig.getJws();
@@ -102,6 +104,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(si.getPassword()));
         userEntity.setEnable(true);
         userEntity.setNickname(si.getNickname());
+        userEntity.setAvatar(defaultUserAvatar);
         userEntity.setRoles(new HashSet<>(List.of(roleEntity.get())));
         userRepo.save(userEntity);
         log.info("Sign up success, {}", si);

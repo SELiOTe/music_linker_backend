@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class YmlConfig {
 
+    private String defaultUserAvatar;
     private final Redis redis = new Redis();
     private final Jws jws = new Jws();
     private final Minio minio = new Minio();
