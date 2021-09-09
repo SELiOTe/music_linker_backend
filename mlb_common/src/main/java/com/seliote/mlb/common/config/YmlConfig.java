@@ -40,6 +40,7 @@ public class YmlConfig {
     @Setter
     public static class Minio {
         private final Catalog catalog = new Catalog();
+        private final Extension extension = new Extension();
         private String endpoint;
         private String accessKey;
         private String secretKey;
@@ -50,7 +51,15 @@ public class YmlConfig {
         public static class Catalog {
             private String img;
             private String audio;
-            private String video;
+        }
+
+        @Getter
+        @Setter
+        public static class Extension {
+            private String imgPng;
+            private String imgJpg;
+            private String imgJpeg;
+            private String audioMp3;
         }
     }
 }

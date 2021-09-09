@@ -1,6 +1,7 @@
 package com.seliote.mlb.fs.service;
 
 import com.seliote.mlb.common.jsr303.minio.Catalog;
+import com.seliote.mlb.common.jsr303.minio.Extension;
 import com.seliote.mlb.fs.exception.MinioException;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,7 +29,7 @@ public interface MinioService {
      * @throws MinioException 上传失败时抛出
      */
     @NotBlank
-    String upload(@Catalog String catalog, @NotBlank String extension, @NotNull InputStream inputStream)
+    String upload(@Catalog String catalog, @Extension String extension, @NotNull InputStream inputStream)
             throws MinioException;
 
     /**
