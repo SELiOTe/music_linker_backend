@@ -17,17 +17,15 @@ import javax.validation.ConstraintValidatorContext;
 @Slf4j
 public class IssValidator implements ConstraintValidator<Iss, String> {
 
-    private final YmlConfig.Jws jws;
-    private String iss;
+    private final String iss;
 
     @Autowired
     public IssValidator(YmlConfig ymlConfig) {
-        this.jws = ymlConfig.getJws();
+        iss = ymlConfig.getJws().getIss();
     }
 
     @Override
     public void initialize(Iss constraintAnnotation) {
-        iss = jws.getIss();
     }
 
     @Override

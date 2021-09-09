@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 用户角色名 JSR 303 校验实现
@@ -18,7 +18,7 @@ import java.util.Set;
 @Slf4j
 public class RoleNameValidator implements ConstraintValidator<RoleName, String> {
 
-    private final Set<String> roleNameSet = new HashSet<>();
+    private final Set<String> roleNameSet = new CopyOnWriteArraySet<>();
 
     @Override
     public void initialize(RoleName constraintAnnotation) {

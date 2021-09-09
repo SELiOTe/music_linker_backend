@@ -11,8 +11,8 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Minio 文件分类 JSR 303 校验实现
@@ -25,7 +25,7 @@ public class CatalogValidator implements ConstraintValidator<Catalog, String> {
 
     private final YmlConfig.Minio minio;
 
-    private final Set<String> catalogSet = new HashSet<>();
+    private final Set<String> catalogSet = new CopyOnWriteArraySet<>();
 
     @Autowired
     public CatalogValidator(YmlConfig ymlConfig) {
