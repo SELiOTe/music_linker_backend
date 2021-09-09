@@ -33,4 +33,8 @@ com.seliote.mlb:
     catalog:
       img: img
       audio: audio
-      video: video
+    extension:
+      img-png: png
+      img-jpg: jpg
+      img-jpeg: jpeg
+      audio-mp3: mp3
