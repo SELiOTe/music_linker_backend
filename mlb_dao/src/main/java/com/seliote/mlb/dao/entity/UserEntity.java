@@ -1,6 +1,6 @@
 package com.seliote.mlb.dao.entity;
 
-import com.seliote.mlb.common.jsr303.userinfo.Avatar;
+import com.seliote.mlb.common.jsr303.minio.Path;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import com.seliote.mlb.dao.AuditingEntity;
@@ -96,7 +96,7 @@ public class UserEntity extends AuditingEntity {
         this.nickname = nickname;
     }
 
-    @Avatar
+    @Path
     @Column(name = "avatar")
     public String getAvatar() {
         return avatar;

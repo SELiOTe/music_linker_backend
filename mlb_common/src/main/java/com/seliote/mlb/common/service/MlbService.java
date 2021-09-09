@@ -1,6 +1,6 @@
 package com.seliote.mlb.common.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Set;
 
@@ -10,8 +10,8 @@ import java.util.Set;
  * @author seliote
  * @version 2021-09-09
  */
-@Service
-public interface CommonService {
+@Validated
+public interface MlbService {
 
     /**
      * 获取支持的 catalog

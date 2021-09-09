@@ -1,7 +1,7 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
 import com.seliote.mlb.common.jsr303.minio.Catalog;
-import com.seliote.mlb.common.service.CommonService;
+import com.seliote.mlb.common.service.MlbService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,18 +19,18 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 public class CatalogValidator implements ConstraintValidator<Catalog, String> {
 
-    private final CommonService commonService;
+    private final MlbService mlbService;
 
     private final Set<String> catalogSet = new CopyOnWriteArraySet<>();
 
     @Autowired
-    public CatalogValidator(CommonService commonService) {
-        this.commonService = commonService;
+    public CatalogValidator(MlbService mlbService) {
+        this.mlbService = mlbService;
     }
 
     @Override
     public void initialize(Catalog constraintAnnotation) {
-        catalogSet.addAll(commonService.minioSupportCatalog());
+        catalogSet.addAll(mlbService.minioSupportCatalog());
     }
 
     @Override

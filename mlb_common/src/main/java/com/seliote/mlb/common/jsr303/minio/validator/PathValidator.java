@@ -1,7 +1,7 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
 import com.seliote.mlb.common.jsr303.minio.Path;
-import com.seliote.mlb.common.service.CommonService;
+import com.seliote.mlb.common.service.MlbService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class PathValidator implements ConstraintValidator<Path, String> {
 
-    private final CommonService commonService;
+    private final MlbService mlbService;
 
     private final Set<String> catalogSet = new CopyOnWriteArraySet<>();
     private final Set<String> extensionSet = new CopyOnWriteArraySet<>();
@@ -29,14 +29,14 @@ public class PathValidator implements ConstraintValidator<Path, String> {
     private final Pattern pathPattern = Pattern.compile("^(\\w+)/(\\w)/(\\w)/([\\w-]{36})\\.(\\w+)$");
 
     @Autowired
-    public PathValidator(CommonService commonService) {
-        this.commonService = commonService;
+    public PathValidator(MlbService mlbService) {
+        this.mlbService = mlbService;
     }
 
     @Override
     public void initialize(Path constraintAnnotation) {
-        catalogSet.addAll(commonService.minioSupportCatalog());
-        extensionSet.addAll(commonService.minioSupportExtension());
+        catalogSet.addAll(mlbService.minioSupportCatalog());
+        extensionSet.addAll(mlbService.minioSupportExtension());
     }
 
     @Override

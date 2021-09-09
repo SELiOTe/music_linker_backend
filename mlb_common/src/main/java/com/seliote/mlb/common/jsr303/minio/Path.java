@@ -18,7 +18,7 @@ import java.lang.annotation.*;
 @SuppressWarnings("unused")
 @Documented
 @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD,
-        ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
+        ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {PathValidator.class})
 @ReportAsSingleViolation
@@ -33,7 +33,7 @@ public @interface Path {
 
     @Documented
     @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD,
-            ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
+            ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
         Path[] value();

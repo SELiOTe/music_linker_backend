@@ -2,7 +2,7 @@ package com.seliote.mlb.common.service.impl;
 
 import com.seliote.mlb.common.config.YmlConfig;
 import com.seliote.mlb.common.exception.MlbException;
-import com.seliote.mlb.common.service.CommonService;
+import com.seliote.mlb.common.service.MlbService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Slf4j
 @Service
-public class CommonServiceImpl implements CommonService {
+public class MlbServiceImpl implements MlbService {
 
     private final YmlConfig.Minio minio;
 
@@ -30,7 +30,7 @@ public class CommonServiceImpl implements CommonService {
     private Set<String> extensionSet;
 
     @Autowired
-    public CommonServiceImpl(YmlConfig ymlConfig) {
+    public MlbServiceImpl(YmlConfig ymlConfig) {
         this.minio = ymlConfig.getMinio();
     }
 

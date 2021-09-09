@@ -1,7 +1,7 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
 import com.seliote.mlb.common.jsr303.minio.Extension;
-import com.seliote.mlb.common.service.CommonService;
+import com.seliote.mlb.common.service.MlbService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,18 +19,18 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 public class ExtensionValidator implements ConstraintValidator<Extension, String> {
 
-    private final CommonService commonService;
+    private final MlbService mlbService;
 
     private final Set<String> extensionSet = new CopyOnWriteArraySet<>();
 
     @Autowired
-    public ExtensionValidator(CommonService commonService) {
-        this.commonService = commonService;
+    public ExtensionValidator(MlbService mlbService) {
+        this.mlbService = mlbService;
     }
 
     @Override
     public void initialize(Extension constraintAnnotation) {
-        extensionSet.addAll(commonService.minioSupportExtension());
+        extensionSet.addAll(mlbService.minioSupportExtension());
     }
 
     @Override
