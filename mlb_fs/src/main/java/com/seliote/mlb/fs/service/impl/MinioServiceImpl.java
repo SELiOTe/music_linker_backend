@@ -26,6 +26,9 @@ import java.util.UUID;
 @Service
 public class MinioServiceImpl implements MinioService {
 
+    // Minio 路径分隔符
+    private static final String MINIO_PATH_SEPARATOR = "/";
+
     private final YmlConfig.Minio minio;
     private final MinioClient minioClient;
 
@@ -37,19 +40,17 @@ public class MinioServiceImpl implements MinioService {
 
     @Override
     public String upload(String catalog, String extension, InputStream inputStream) throws MinioException {
-        // Minio 路径分隔符
-        final String MINIO_PATH_SEPARATOR = "/";
         String filename = UUID.randomUUID().toString();
         // 分为 26 * 26 目录存储，避免同级存在大量文件
-        filename = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
+        String path = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
                 + filename.charAt(1) + MINIO_PATH_SEPARATOR + filename + "." + extension;
         try {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(minio.getBucket())
-                    .object(filename)
+                    .object(path)
                     .stream(inputStream, -1, 1024 * 1024 * 10)
                     .build());
-            log.info("Upload file {}", filename);
+            log.info("Upload file {}", path);
             return filename;
         } catch (io.minio.errors.MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException
                 exception) {
@@ -59,7 +60,9 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public InputStream download(String path) throws MinioException {
+    public InputStream download(String catalog, String filename) throws MinioException {
+        String path = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
+                + filename.charAt(1) + MINIO_PATH_SEPARATOR + filename;
         try {
             var inputStream = minioClient.getObject(GetObjectArgs.builder()
                     .bucket(minio.getBucket())

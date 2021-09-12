@@ -22,7 +22,7 @@ spring:
       FAIL_ON_UNKNOWN_PROPERTIES: true
 
 com.seliote.mlb:
-  default-user-avatar: img/0/0/00000000-0000-0000-0000-000000000000.jpeg
+  default-user-avatar: 00000000-0000-0000-0000-000000000000.jpeg
   redis:
     namespace: mlb_m
     key-separator: ':'

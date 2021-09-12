@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
-@Path
+@Filename
 public @interface Avatar {
 
     String message() default "Illegal avatar";
