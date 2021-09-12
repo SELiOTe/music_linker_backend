@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class PathValidator implements ConstraintValidator<Path, String> {
 
-    private final MlbService mlbService;
+    //private final MlbService mlbService;
 
     private final Set<String> catalogSet = new CopyOnWriteArraySet<>();
     private final Set<String> extensionSet = new CopyOnWriteArraySet<>();
@@ -28,33 +28,33 @@ public class PathValidator implements ConstraintValidator<Path, String> {
     // 路径正则
     private final Pattern pathPattern = Pattern.compile("^(\\w+)/(\\w)/(\\w)/([\\w-]{36})\\.(\\w+)$");
 
-    @Autowired
-    public PathValidator(MlbService mlbService) {
-        this.mlbService = mlbService;
-    }
+    //@Autowired
+    //public PathValidator(MlbService mlbService) {
+    //    this.mlbService = mlbService;
+    //}
 
     @Override
     public void initialize(Path constraintAnnotation) {
-        catalogSet.addAll(mlbService.minioSupportCatalog());
-        extensionSet.addAll(mlbService.minioSupportExtension());
+        //catalogSet.addAll(mlbService.minioSupportCatalog());
+        //extensionSet.addAll(mlbService.minioSupportExtension());
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        var matcher = pathPattern.matcher(s);
-        if (!matcher.find()) {
-            log.warn("Minio path {} is illegal", s);
-            return false;
-        }
-        // catalog 部分
-        var catalog = matcher.group(1);
-        // extension 部分
-        var extension = matcher.group(5);
-        if (catalogSet.contains(catalog) && extensionSet.contains(extension)) {
+        //var matcher = pathPattern.matcher(s);
+        //if (!matcher.find()) {
+        //    log.warn("Minio path {} is illegal", s);
+        //    return false;
+        //}
+        //// catalog 部分
+        //var catalog = matcher.group(1);
+        //// extension 部分
+        //var extension = matcher.group(5);
+        //if (catalogSet.contains(catalog) && extensionSet.contains(extension)) {
             return true;
-        } else {
-            log.warn("Minio path {} is illegal, catalog or extension illegal", s);
-            return false;
-        }
+        //} else {
+        //    log.warn("Minio path {} is illegal, catalog or extension illegal", s);
+        //    return false;
+        //}
     }
 }
