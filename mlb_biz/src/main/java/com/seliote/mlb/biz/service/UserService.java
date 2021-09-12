@@ -2,6 +2,7 @@ package com.seliote.mlb.biz.service;
 
 import com.seliote.mlb.biz.domain.si.user.*;
 import com.seliote.mlb.biz.domain.so.user.FindUserSo;
+import com.seliote.mlb.biz.domain.so.user.GetUserInfoSo;
 import com.seliote.mlb.biz.domain.so.user.SignUpSo;
 import org.springframework.validation.annotation.Validated;
 
@@ -74,4 +75,19 @@ public interface UserService {
      * @param si 请求 SI
      */
     void resetPassword(@NotNull @Valid ResetPasswordSi si);
+
+    /**
+     * 获取当前用户 ID
+     *
+     * @return 当前用户 ID，无法获取时返回空
+     */
+    Optional<Long> currentUserId();
+
+    /**
+     * 获取用户信息
+     *
+     * @param userId 用户 ID
+     * @return 用户信息 SO
+     */
+    Optional<GetUserInfoSo> getUserInfo(@NotNull Long userId);
 }

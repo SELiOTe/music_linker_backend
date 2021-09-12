@@ -1,9 +1,7 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
 import com.seliote.mlb.common.jsr303.minio.Path;
-import com.seliote.mlb.common.service.MlbService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -51,7 +49,7 @@ public class PathValidator implements ConstraintValidator<Path, String> {
         //// extension 部分
         //var extension = matcher.group(5);
         //if (catalogSet.contains(catalog) && extensionSet.contains(extension)) {
-            return true;
+        return true;
         //} else {
         //    log.warn("Minio path {} is illegal, catalog or extension illegal", s);
         //    return false;

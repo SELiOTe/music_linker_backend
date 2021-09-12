@@ -6,8 +6,10 @@ import com.seliote.mlb.auth.domain.Role;
 import com.seliote.mlb.auth.service.JwsService;
 import com.seliote.mlb.biz.domain.si.user.*;
 import com.seliote.mlb.biz.domain.so.user.FindUserSo;
+import com.seliote.mlb.biz.domain.so.user.GetUserInfoSo;
 import com.seliote.mlb.biz.domain.so.user.SignUpSo;
 import com.seliote.mlb.biz.domain.so.user.mapper.FindUserSoMapper;
+import com.seliote.mlb.biz.domain.so.user.mapper.GetUserInfoSoMapper;
 import com.seliote.mlb.biz.domain.so.user.mapper.SignUpSoMapper;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.YmlConfig;
@@ -22,9 +24,11 @@ import com.seliote.mlb.dao.repo.TrustDeviceRepo;
 import com.seliote.mlb.dao.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -181,5 +185,30 @@ public class UserServiceImpl implements UserService {
         }
         user.get().setPassword(passwordEncoder.encode(si.getPassword()));
         userRepo.save(user.get());
+    }
+
+    @Override
+    public Optional<Long> currentUserId() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            log.warn("Can not get authentication from context");
+            return Optional.empty();
+        }
+        var id = authentication.getName();
+        if (!StringUtils.hasText(id) || !id.matches("^\\d+$")) {
+            log.error("User id {} is illegal", id);
+            return Optional.empty();
+        }
+        return Optional.of(Long.parseLong(id));
+    }
+
+    @Override
+    public Optional<GetUserInfoSo> getUserInfo(Long userId) {
+        var user = userRepo.findById(userId);
+        if (user.isEmpty()) {
+            log.info("User {} not found", userId);
+            return Optional.empty();
+        }
+        return Optional.of(GetUserInfoSoMapper.INSTANCE.fromUserEntity(user.get()));
     }
 }
