@@ -28,6 +28,7 @@ public interface GetUserInfoSoMapper {
     @Mapping(source = "countryEntity.countryCode", target = "countryCode")
     @Mapping(source = "countryEntity.localName", target = "localName")
     @Mapping(source = "nickname", target = "nickname")
+    @Mapping(source = "gender", target = "gender")
     @Mapping(source = "avatar", target = "avatar")
     GetUserInfoSo fromUserEntity(UserEntity userEntity);
 }

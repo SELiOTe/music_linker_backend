@@ -3,6 +3,7 @@ package com.seliote.mlb.biz.domain.so.user;
 import com.seliote.mlb.common.jsr303.country.CountryCode;
 import com.seliote.mlb.common.jsr303.country.LocalName;
 import com.seliote.mlb.common.jsr303.userinfo.Avatar;
+import com.seliote.mlb.common.jsr303.userinfo.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import lombok.Data;
 
@@ -32,6 +33,10 @@ public class GetUserInfoSo {
     // 用户昵称
     @Nickname
     private String nickname;
+
+    // 用户性别
+    @Gender
+    private Integer gender;
 
     // 用户头像，Minio 路径
     @Avatar

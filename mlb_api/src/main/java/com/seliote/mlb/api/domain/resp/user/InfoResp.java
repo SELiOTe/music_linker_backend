@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seliote.mlb.common.jsr303.country.CountryCode;
 import com.seliote.mlb.common.jsr303.country.LocalName;
 import com.seliote.mlb.common.jsr303.userinfo.Avatar;
+import com.seliote.mlb.common.jsr303.userinfo.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import lombok.Data;
 
@@ -37,6 +38,11 @@ public class InfoResp {
     @JsonProperty("nickname")
     @Nickname
     private String nickname;
+
+    // 用户性别
+    @JsonProperty("gender")
+    @Gender
+    private Integer gender;
 
     // 用户头像，Minio 路径
     @JsonProperty("avatar")
