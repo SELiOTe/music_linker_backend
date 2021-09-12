@@ -222,6 +222,7 @@ CREATE TABLE user
     password           CHAR(60)    NOT NULL COMMENT 'user login password with bCrypt',
     enable             BOOLEAN     NOT NULL DEFAULT TRUE COMMENT 'user account is enable or not',
     nickname           VARCHAR(16) NOT NULL COMMENT 'user nickname',
+    gender             TINYINT     NOT NULL COMMENT 'user gender, 0 is unknown, 1 is male, 2 is female',
     avatar             VARCHAR(48) NOT NULL COMMENT 'user avatar, minio path',
     created_date       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
     last_modified_date TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',

@@ -1,6 +1,7 @@
 package com.seliote.mlb.dao.entity;
 
 import com.seliote.mlb.common.jsr303.minio.Avatar;
+import com.seliote.mlb.common.jsr303.userinfo.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import com.seliote.mlb.dao.AuditingEntity;
@@ -37,6 +38,9 @@ public class UserEntity extends AuditingEntity {
 
     // 用户昵称
     private String nickname;
+
+    // 用户性别，0 为未知，1 为男，2 为女
+    private Integer gender;
 
     // 用户头像，Minio 路径
     private String avatar;
@@ -94,6 +98,16 @@ public class UserEntity extends AuditingEntity {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    @Gender
+    @Column(name = "gender")
+    public Integer getGender() {
+        return gender;
+    }
+
+    public void setGender(Integer gender) {
+        this.gender = gender;
     }
 
     @Avatar

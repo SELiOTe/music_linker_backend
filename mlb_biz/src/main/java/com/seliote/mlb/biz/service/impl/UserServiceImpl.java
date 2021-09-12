@@ -13,6 +13,7 @@ import com.seliote.mlb.biz.domain.so.user.mapper.GetUserInfoSoMapper;
 import com.seliote.mlb.biz.domain.so.user.mapper.SignUpSoMapper;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.YmlConfig;
+import com.seliote.mlb.common.domain.eunm.GenderEnum;
 import com.seliote.mlb.common.domain.eunm.RoleNameEnum;
 import com.seliote.mlb.common.exception.MlbException;
 import com.seliote.mlb.common.service.RedisService;
@@ -108,6 +109,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(si.getPassword()));
         userEntity.setEnable(true);
         userEntity.setNickname(si.getNickname());
+        userEntity.setGender(GenderEnum.unknown.getGenderValue());
         userEntity.setAvatar(defaultUserAvatar);
         userEntity.setRoles(new HashSet<>(List.of(roleEntity.get())));
         userRepo.save(userEntity);
