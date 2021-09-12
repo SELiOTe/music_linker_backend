@@ -1,6 +1,6 @@
 package com.seliote.mlb.dao.entity;
 
-import com.seliote.mlb.common.jsr303.minio.Avatar;
+import com.seliote.mlb.common.jsr303.userinfo.Avatar;
 import com.seliote.mlb.common.jsr303.userinfo.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;

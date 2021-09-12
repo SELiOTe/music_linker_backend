@@ -1,4 +1,6 @@
-package com.seliote.mlb.common.jsr303.minio;
+package com.seliote.mlb.common.jsr303.userinfo;
+
+import com.seliote.mlb.common.jsr303.minio.Filename;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
