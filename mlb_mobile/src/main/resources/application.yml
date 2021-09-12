@@ -32,8 +32,8 @@ com.seliote.mlb:
   minio:
     bucket: mlb
     catalog:
-      img: img
-      audio: audio
+      avatar: avatar
+      music: music
     extension:
       img-png: png
       img-jpg: jpg

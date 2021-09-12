@@ -20,15 +20,15 @@ import java.util.regex.Pattern;
 @Slf4j
 public class FilenameValidator implements ConstraintValidator<Filename, String> {
 
-    private final MlbService mlbService;
+    //private final MlbService mlbService;
 
     private final Set<String> extensionSet = new CopyOnWriteArraySet<>();
     Pattern pattern = Pattern.compile("^\\d{8}-\\d{4}-\\d{4}-\\d{4}-\\d{12}\\.(\\w+)$");
 
-    @Autowired
-    public FilenameValidator(MlbService mlbService) {
-        this.mlbService = mlbService;
-    }
+    //@Autowired
+    //public FilenameValidator(MlbService mlbService) {
+    //    this.mlbService = mlbService;
+    //}
 
     //@Override
     //public void initialize(Filename constraintAnnotation) {

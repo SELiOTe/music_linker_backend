@@ -50,8 +50,8 @@ public class YmlConfig {
         @Getter
         @Setter
         public static class Catalog {
-            private String img;
-            private String audio;
+            private String avatar;
+            private String music;
         }
 
         @Getter
