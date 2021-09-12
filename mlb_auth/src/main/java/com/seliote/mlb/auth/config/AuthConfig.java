@@ -57,8 +57,10 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers(permitAll).permitAll()
-                .and().authorizeRequests().antMatchers("/admin/**").hasAnyRole(RoleNameEnum.admin.name())
-                .and().authorizeRequests().antMatchers("/**").hasAnyRole(RoleNameEnum.user.name())
+                .and().authorizeRequests().antMatchers("/admin/**")
+                .hasAnyAuthority(RoleNameEnum.admin.name())
+                .and().authorizeRequests().antMatchers("/**")
+                .hasAnyAuthority(RoleNameEnum.user.name())
                 .and().authorizeRequests().anyRequest().authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint((req, resp, e) -> {
