@@ -1,4 +1,4 @@
-package com.seliote.mlb.common.jsr303.userinfo;
+package com.seliote.mlb.common.jsr303.common;
 
 import com.seliote.mlb.common.jsr303.userinfo.validator.GenderValidator;
 

@@ -1,7 +1,7 @@
 package com.seliote.mlb.common.jsr303.userinfo.validator;
 
 import com.seliote.mlb.common.domain.eunm.GenderEnum;
-import com.seliote.mlb.common.jsr303.userinfo.Gender;
+import com.seliote.mlb.common.jsr303.common.Gender;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;

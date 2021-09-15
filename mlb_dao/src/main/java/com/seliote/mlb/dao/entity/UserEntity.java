@@ -1,7 +1,7 @@
 package com.seliote.mlb.dao.entity;
 
+import com.seliote.mlb.common.jsr303.common.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Avatar;
-import com.seliote.mlb.common.jsr303.userinfo.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import com.seliote.mlb.common.jsr303.userinfo.TelNo;
 import com.seliote.mlb.dao.AuditingEntity;
@@ -47,6 +47,9 @@ public class UserEntity extends AuditingEntity {
 
     // 用户角色
     private Set<RoleEntity> roles;
+
+    // 用户上传的音乐
+    private Set<MusicEntity> uploadMusic;
 
     @NotNull
     @Valid
@@ -132,5 +135,19 @@ public class UserEntity extends AuditingEntity {
 
     public void setRoles(Set<RoleEntity> roles) {
         this.roles = roles;
+    }
+
+    @NotNull
+    @Valid
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "music_upload",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "music_id", referencedColumnName = "id"))
+    public Set<MusicEntity> getUploadMusic() {
+        return uploadMusic;
+    }
+
+    public void setUploadMusic(Set<MusicEntity> uploadMusic) {
+        this.uploadMusic = uploadMusic;
     }
 }
