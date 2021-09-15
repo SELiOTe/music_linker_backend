@@ -323,7 +323,7 @@ CREATE TABLE lyric
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
     last_modified_date TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
     PRIMARY KEY pk_i (id) COMMENT 'row primary key',
-    FOREIGN KEY fk_mu_mi (music_id) REFERENCES music (id)
+    FOREIGN KEY fk_l_mi (music_id) REFERENCES music (id)
 )
     ENGINE = InnoDB
     CHARACTER SET = utf8mb4
