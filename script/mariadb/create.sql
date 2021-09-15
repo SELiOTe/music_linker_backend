@@ -281,3 +281,68 @@ CREATE TABLE trust_device
     CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_unicode_ci
     COMMENT = 'user trust device';
+
+CREATE TABLE singer
+(
+    id                 BIGINT        NOT NULL AUTO_INCREMENT COMMENT 'row id',
+    name               VARCHAR(64)   NOT NULL COMMENT 'singer name',
+    gender             TINYINT       NOT NULL COMMENT 'singer gender, 0 is unknown, 1 is male, 2 is female',
+    img                VARCHAR(48)   NOT NULL COMMENT 'singer img, minio path',
+    brief              VARCHAR(1024) NOT NULL COMMENT 'singer brief',
+    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
+    last_modified_date TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
+    PRIMARY KEY pk_i (id) COMMENT 'row primary key'
+)
+    ENGINE = InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    COMMENT = 'singer';
+
+CREATE TABLE music
+(
+    id                 BIGINT      NOT NULL AUTO_INCREMENT COMMENT 'row id',
+    file               VARCHAR(48) NOT NULL COMMENT 'music file, minio path',
+    name               VARCHAR(64) NOT NULL COMMENT 'music name',
+    singer_id          BIGINT      NOT NULL COMMENT 'singer of music',
+    created_date       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
+    last_modified_date TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
+    PRIMARY KEY pk_i (id) COMMENT 'row primary key',
+    FOREIGN KEY fk_m_si (singer_id) REFERENCES singer (id)
+)
+    ENGINE = InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    COMMENT = 'music';
+
+CREATE TABLE lyric
+(
+    id                 BIGINT        NOT NULL AUTO_INCREMENT COMMENT 'row id',
+    music_id           BIGINT        NOT NULL COMMENT 'music id',
+    offset_milli       BIGINT        NOT NULL COMMENT 'lyric line start millisecond',
+    line               VARCHAR(1024) NOT NULL COMMENT 'lyric line',
+    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
+    last_modified_date TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
+    PRIMARY KEY pk_i (id) COMMENT 'row primary key',
+    FOREIGN KEY fk_mu_mi (music_id) REFERENCES music (id)
+)
+    ENGINE = InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    COMMENT = 'lyric';
+
+CREATE TABLE music_upload
+(
+    id                 BIGINT    NOT NULL AUTO_INCREMENT COMMENT 'row id',
+    user_id            BIGINT    NOT NULL COMMENT 'uploaded user id',
+    music_id           BIGINT    NOT NULL COMMENT 'music id',
+    created_date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row created date',
+    last_modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'row last modified date',
+    PRIMARY KEY pk_i (id) COMMENT 'row primary key',
+    FOREIGN KEY fk_mu_ui (user_id) REFERENCES user (id),
+    FOREIGN KEY fk_mu_mi (music_id) REFERENCES music (id),
+    UNIQUE KEY uk_mu_ui_mi (user_id, music_id) COMMENT 'unique of user id and music id'
+)
+    ENGINE = InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    COMMENT = 'music upload';
