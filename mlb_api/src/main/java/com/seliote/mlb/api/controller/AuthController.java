@@ -57,7 +57,7 @@ public class AuthController {
      * 用户是否注册
      *
      * @param req 请求实体
-     * @return 响应实体
+     * @return 响应实体，0 为已注册，1 为未注册
      */
     @Valid
     @PostMapping("/is_signed_up")

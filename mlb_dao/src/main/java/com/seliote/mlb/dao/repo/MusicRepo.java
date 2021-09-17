@@ -1,6 +1,7 @@
 package com.seliote.mlb.dao.repo;
 
 import com.seliote.mlb.dao.entity.MusicEntity;
+import com.seliote.mlb.dao.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.validation.annotation.Validated;
 
