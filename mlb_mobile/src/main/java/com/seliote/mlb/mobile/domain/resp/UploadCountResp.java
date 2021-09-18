@@ -1,11 +1,12 @@
 package com.seliote.mlb.mobile.domain.resp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.seliote.mlb.common.jsr303.music.CatalogMusicCount;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Min;
 
 /**
  * 获取用户上传音乐总数 Resp
@@ -21,6 +22,6 @@ public class UploadCountResp {
 
     // 音乐数
     @JsonProperty("count")
-    @CatalogMusicCount
+    @Min(0)
     private Long count;
 }

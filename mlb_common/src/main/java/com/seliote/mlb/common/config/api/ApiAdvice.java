@@ -34,8 +34,8 @@ public class ApiAdvice {
     @ExceptionHandler({ApiException.class})
     @ResponseBody
     public Resp<Void> handle(ApiException exception) {
-        log.warn("API exception, code {}, message {}", exception.getCode(), exception.getMessage());
-        return Resp.resp(exception.getCode(), exception.getMessage());
+        log.error("Api exception", exception);
+        return Resp.resp(SYSTEM_UNKNOWN_EXCEPTION_CODE, SYSTEM_UNKNOWN_EXCEPTION_MSG);
     }
 
     /**

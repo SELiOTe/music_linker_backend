@@ -1,8 +1,6 @@
 logging:
   level:
-    root: warn
-    com.seliote.mlb: info
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    com.seliote.mlb: debug
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p --- [%t] %-40.40logger{39} : %-0.-4096m%n'
   file:

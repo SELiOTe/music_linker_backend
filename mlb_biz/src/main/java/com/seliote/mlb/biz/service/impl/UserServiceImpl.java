@@ -112,6 +112,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setGender(GenderEnum.unknown.getGenderValue());
         userEntity.setAvatar(defaultUserAvatar);
         userEntity.setRoles(new HashSet<>(List.of(roleEntity.get())));
+        userEntity.setUploadMusic(new HashSet<>());
         userRepo.save(userEntity);
         log.info("Sign up success, {}", si);
         return Optional.of(SignUpSoMapper.INSTANCE.fromUserEntity(userEntity));

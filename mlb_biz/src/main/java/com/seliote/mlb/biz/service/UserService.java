@@ -25,6 +25,7 @@ public interface UserService {
      * @param si 请求 SI
      * @return 已注册返回对应 SO
      */
+    @Valid
     Optional<FindUserSo> findUser(@NotNull @Valid FindUserSi si);
 
     /**

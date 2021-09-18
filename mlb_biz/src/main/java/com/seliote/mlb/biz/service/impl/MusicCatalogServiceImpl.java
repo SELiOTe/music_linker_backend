@@ -1,6 +1,7 @@
 package com.seliote.mlb.biz.service.impl;
 
 import com.seliote.mlb.biz.service.MusicCatalogService;
+import com.seliote.mlb.common.exception.ApiException;
 import com.seliote.mlb.dao.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class MusicCatalogServiceImpl implements MusicCatalogService {
     }
 
     @Override
-    public Long uploadCount(Long userId) {
+    public long uploadCount(Long userId) {
+        var user = userRepo.findById(userId);
+        if (user.isEmpty()) {
+            log.error("User {} not exists", userId);
+            throw new ApiException("User not found");
+        }
+        return user.get().getUploadMusic().size();
     }
 }

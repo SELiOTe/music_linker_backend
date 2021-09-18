@@ -1,8 +1,8 @@
 package com.seliote.mlb.biz.service;
 
-import com.seliote.mlb.common.jsr303.music.CatalogMusicCount;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -20,6 +20,6 @@ public interface MusicCatalogService {
      * @param userId 用户 ID
      * @return 用户上传的音乐总数
      */
-    @CatalogMusicCount
-    Long uploadCount(@NotNull Long userId);
+    @Min(0)
+    long uploadCount(@NotNull Long userId);
 }
