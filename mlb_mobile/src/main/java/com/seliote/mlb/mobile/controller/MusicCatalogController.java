@@ -4,7 +4,6 @@ import com.seliote.mlb.biz.service.MusicCatalogService;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.api.ApiFreq;
 import com.seliote.mlb.common.domain.resp.Resp;
-import com.seliote.mlb.common.exception.ApiException;
 import com.seliote.mlb.mobile.domain.req.musiccatalog.UploadCountReq;
 import com.seliote.mlb.mobile.domain.req.musiccatalog.UploadListReq;
 import com.seliote.mlb.mobile.domain.resp.musiccatalog.UploadCountResp;
@@ -54,10 +53,11 @@ public class MusicCatalogController {
     @PostMapping("/upload_count")
     @ApiFreq(freq = 20)
     public Resp<UploadCountResp> uploadCount(@RequestBody @NotNull @Valid UploadCountReq req) {
-        userService.getUserInfo(req.getUserId()).orElseThrow(() -> {
-            log.error("User {} not exists when get upload count", req.getUserId());
-            throw new ApiException("User not found");
-        });
+        var user = userService.getUserInfo(req.getUserId());
+        if (user.isEmpty()) {
+            log.info("User {} not exists", req);
+            return Resp.resp(1, "user not exists");
+        }
         var count = musicCatalogService.uploadCount(req.getUserId());
         log.info("User {} upload count is {}", req.getUserId(), count);
         return Resp.resp(UploadCountResp.builder().count(count).build());
@@ -73,10 +73,11 @@ public class MusicCatalogController {
     @PostMapping("/upload_list")
     @ApiFreq(freq = 20)
     public Resp<List<UploadListResp>> uploadList(@RequestBody @NotNull @Valid UploadListReq req) {
-        userService.getUserInfo(req.getUserId()).orElseThrow(() -> {
-            log.error("User {} not exists when get upload list", req.getUserId());
-            throw new ApiException("User not found");
-        });
+        var user = userService.getUserInfo(req.getUserId());
+        if (user.isEmpty()) {
+            log.info("User {} not exists", req);
+            return Resp.resp(1, "user not exists");
+        }
         var soList = musicCatalogService.uploadList(req.getUserId());
         return Resp.resp(UploadListRespMapper.INSTANCE.fromUploadListSoList(soList));
     }
