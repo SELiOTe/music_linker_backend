@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -39,16 +39,16 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public String upload(String catalog, String extension, InputStream inputStream) throws MinioException {
+    public String upload(String catalog, String extension, byte[] bytes) throws MinioException {
         String filename = UUID.randomUUID().toString();
         // 分为 26 * 26 目录存储，避免同级存在大量文件
         String path = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
                 + filename.charAt(1) + MINIO_PATH_SEPARATOR + filename + "." + extension;
-        try {
+        try (var is = new ByteArrayInputStream(bytes)) {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(minio.getBucket())
                     .object(path)
-                    .stream(inputStream, -1, 1024 * 1024 * 10)
+                    .stream(is, -1, 1024 * 1024 * 10)
                     .build());
             log.info("Upload file {}", path);
             return filename;
@@ -60,16 +60,15 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public InputStream download(String catalog, String filename) throws MinioException {
+    public byte[] download(String catalog, String filename) throws MinioException {
         String path = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
                 + filename.charAt(1) + MINIO_PATH_SEPARATOR + filename;
-        try {
-            var inputStream = minioClient.getObject(GetObjectArgs.builder()
-                    .bucket(minio.getBucket())
-                    .object(path)
-                    .build());
+        try (var is = minioClient.getObject(GetObjectArgs.builder()
+                .bucket(minio.getBucket())
+                .object(path)
+                .build())) {
             log.info("Download file {}", path);
-            return inputStream;
+            return is.readAllBytes();
         } catch (io.minio.errors.MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException
                 exception) {
             log.info("Failed download file {}, {}", path, exception.getMessage());
