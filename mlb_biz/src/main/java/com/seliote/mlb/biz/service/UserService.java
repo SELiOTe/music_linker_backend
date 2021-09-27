@@ -46,7 +46,7 @@ public interface UserService {
     boolean addTrustDevice(@NotNull @Valid AddTrustDeviceSi si);
 
     /**
-     * 创建用户 Token
+     * 创建用户 Token 并写入至缓存，存在旧 Token 时将会刷新旧 Token
      *
      * @param userId 用户 ID
      * @return 创建成功返回 Token

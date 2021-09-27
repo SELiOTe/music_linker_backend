@@ -1,6 +1,7 @@
 package com.seliote.mlb.api.controller;
 
 import com.seliote.mlb.api.domain.resp.user.InfoResp;
+import com.seliote.mlb.api.domain.resp.user.RefreshTokenResp;
 import com.seliote.mlb.api.domain.resp.user.mapper.InfoRespMapper;
 import com.seliote.mlb.biz.service.UserService;
 import com.seliote.mlb.common.config.api.ApiFreq;
@@ -53,5 +54,27 @@ public class UserController {
             return Resp.resp(1, "can not get user");
         }
         return Resp.resp(InfoRespMapper.INSTANCE.fromGetUserInfoSo(user.get()));
+    }
+
+    /**
+     * 刷新当前用户的 Token 并失效当前的
+     *
+     * @return 新生成的 Token，0 为刷新成功并会返回相应的新 Token，1 为无法获取当前用户，2 为生成 Token 失败
+     */
+    @Valid
+    @PostMapping("/refresh_token")
+    @ApiFreq
+    public Resp<RefreshTokenResp> refreshToken() {
+        var id = userService.currentUserId();
+        if (id.isEmpty()) {
+            log.warn("Can not get current user id");
+            return Resp.resp(1, "can not get user id");
+        }
+        var token = userService.createToken(id.get());
+        if (token.isEmpty()) {
+            log.warn("Can not generate token");
+            return Resp.resp(2, "can not generate token");
+        }
+        return Resp.resp(RefreshTokenResp.builder().token(token.get()).build());
     }
 }
