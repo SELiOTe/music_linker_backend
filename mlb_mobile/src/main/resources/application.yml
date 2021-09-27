@@ -34,6 +34,7 @@ com.seliote.mlb:
     catalog:
       avatar: avatar
       music: music
+      singer-img: singer-img
     extension:
       img-png: png
       img-jpg: jpg

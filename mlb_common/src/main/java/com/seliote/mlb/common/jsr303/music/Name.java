@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 @NotBlank
-@Pattern(regexp = "^\\w{1,64}$")
+@Pattern(regexp = "^.{1,64}$")
 public @interface Name {
 
     String message() default "Illegal music name";

@@ -33,6 +33,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -112,7 +113,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setGender(GenderEnum.unknown.getGenderValue());
         userEntity.setAvatar(defaultUserAvatar);
         userEntity.setRoles(new HashSet<>(List.of(roleEntity.get())));
-        userEntity.setUploadMusic(new HashSet<>());
+        userEntity.setUploadMusic(new ArrayList<>());
         userRepo.save(userEntity);
         log.info("Sign up success, {}", si);
         return Optional.of(SignUpSoMapper.INSTANCE.fromUserEntity(userEntity));

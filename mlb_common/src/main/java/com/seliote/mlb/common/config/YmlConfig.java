@@ -52,6 +52,7 @@ public class YmlConfig {
         public static class Catalog {
             private String avatar;
             private String music;
+            private String singerImg;
         }
 
         @Getter

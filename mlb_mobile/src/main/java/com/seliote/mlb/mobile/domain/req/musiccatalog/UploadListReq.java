@@ -1,4 +1,4 @@
-package com.seliote.mlb.mobile.domain.req;
+package com.seliote.mlb.mobile.domain.req.musiccatalog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -6,13 +6,13 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 /**
- * 获取用户上传音乐总数 Req
+ * 获取用户上传音乐列表 Req
  *
  * @author seliote
  * @version 2021-09-17
  */
 @Data
-public class UploadCountReq {
+public class UploadListReq {
 
     // 用户 ID
     @JsonProperty("user_id")

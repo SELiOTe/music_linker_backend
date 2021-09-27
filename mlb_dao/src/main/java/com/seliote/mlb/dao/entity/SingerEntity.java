@@ -26,7 +26,7 @@ public class SingerEntity extends AuditingEntity {
     private Integer gender;
 
     // 歌手照片
-    private Integer img;
+    private String img;
 
     // 歌手简介
     private String brief;
@@ -53,11 +53,11 @@ public class SingerEntity extends AuditingEntity {
 
     @Img
     @Column(name = "img")
-    public Integer getImg() {
+    public String getImg() {
         return img;
     }
 
-    public void setImg(Integer img) {
+    public void setImg(String img) {
         this.img = img;
     }
 

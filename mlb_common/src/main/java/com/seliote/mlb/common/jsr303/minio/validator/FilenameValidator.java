@@ -1,9 +1,7 @@
 package com.seliote.mlb.common.jsr303.minio.validator;
 
 import com.seliote.mlb.common.jsr303.minio.Filename;
-import com.seliote.mlb.common.service.MlbService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

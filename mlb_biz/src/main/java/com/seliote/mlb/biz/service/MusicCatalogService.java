@@ -1,9 +1,12 @@
 package com.seliote.mlb.biz.service;
 
+import com.seliote.mlb.biz.domain.so.musiccatalog.UploadListSo;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 歌单信息 Service
@@ -22,4 +25,14 @@ public interface MusicCatalogService {
      */
     @Min(0)
     long uploadCount(@NotNull Long userId);
+
+    /**
+     * 获取用户上传音乐列表
+     *
+     * @param userId 用户 ID
+     * @return 用户上传音乐列表
+     */
+    @NotNull
+    @Valid
+    List<UploadListSo> uploadList(@NotNull Long userId);
 }

@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,7 +50,7 @@ public class UserEntity extends AuditingEntity {
     private Set<RoleEntity> roles;
 
     // 用户上传的音乐
-    private Set<MusicEntity> uploadMusic;
+    private List<MusicEntity> uploadMusic;
 
     @NotNull
     @Valid
@@ -143,11 +144,11 @@ public class UserEntity extends AuditingEntity {
     @JoinTable(name = "music_upload",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "music_id", referencedColumnName = "id"))
-    public Set<MusicEntity> getUploadMusic() {
+    public List<MusicEntity> getUploadMusic() {
         return uploadMusic;
     }
 
-    public void setUploadMusic(Set<MusicEntity> uploadMusic) {
+    public void setUploadMusic(List<MusicEntity> uploadMusic) {
         this.uploadMusic = uploadMusic;
     }
 }

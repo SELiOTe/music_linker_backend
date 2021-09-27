@@ -1,4 +1,4 @@
-package com.seliote.mlb.mobile.domain.resp;
+package com.seliote.mlb.mobile.domain.resp.musiccatalog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

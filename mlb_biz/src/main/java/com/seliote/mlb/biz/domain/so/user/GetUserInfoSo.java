@@ -1,9 +1,9 @@
 package com.seliote.mlb.biz.domain.so.user;
 
+import com.seliote.mlb.common.jsr303.common.Gender;
 import com.seliote.mlb.common.jsr303.country.CountryCode;
 import com.seliote.mlb.common.jsr303.country.LocalName;
 import com.seliote.mlb.common.jsr303.userinfo.Avatar;
-import com.seliote.mlb.common.jsr303.common.Gender;
 import com.seliote.mlb.common.jsr303.userinfo.Nickname;
 import lombok.Data;
 
