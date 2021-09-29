@@ -51,21 +51,27 @@ spring:
         jaas:
           config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="root" password="kafka520!"'
     producer:
+      client-id: mlb-mobile-producer
       acks: all
       retries: 3
       batch-size: 16384
       buffer-memory: 33554432
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      compression-type: snappy
     consumer:
+      client-id: mlb-mobile-consumer
       auto-offset-reset: earliest
-      max-poll-records: 20
+      max-poll-records: 10
       auto-commit-interval: 1000
       enable-auto-commit: true
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      fetch-min-size: 4096
+      fetch-max-wait: 200
     listener:
       missing-topics-fatal: true
+      concurrency: 50
   quartz:
     job-store-type: jdbc
     jdbc:
