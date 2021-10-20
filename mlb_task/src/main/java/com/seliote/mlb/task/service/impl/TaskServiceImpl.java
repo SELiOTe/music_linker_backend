@@ -19,58 +19,6 @@ import java.util.Map;
 @Service
 public class TaskServiceImpl implements TaskService {
 
-    private final Scheduler scheduler;
-
-    @Autowired
-    public TaskServiceImpl(Scheduler scheduler) {
-        this.scheduler = scheduler;
-    }
-
-    @Override
-    public void addTask(JobDetail jobDetail, CronTrigger cronTrigger) {
-        try {
-            scheduler.scheduleJob(jobDetail, cronTrigger);
-            log.info("Add task {} - {}", jobDetail.getKey().getGroup(), jobDetail.getKey().getName());
-        } catch (SchedulerException exception) {
-            log.error("Failed create {} - {}, {}",
-                    jobDetail.getKey().getGroup(), jobDetail.getKey().getName(), exception.getMessage());
-            throw new TaskException(exception);
-        }
-    }
-
-    @Override
-    public void deleteTask(JobKey jobKey) {
-        try {
-            scheduler.deleteJob(jobKey);
-            log.info("Delete task {} -{}", jobKey.getGroup(), jobKey.getName());
-        } catch (SchedulerException exception) {
-            log.info("Failed delete task {} -{}, {}", jobKey.getGroup(), jobKey.getName(), exception.getMessage());
-            throw new TaskException(exception);
-        }
-    }
-
-    @Override
-    public void pauseTask(JobKey jobKey) {
-        try {
-            scheduler.pauseJob(jobKey);
-            log.info("Pause task {} -{}", jobKey.getGroup(), jobKey.getName());
-        } catch (SchedulerException exception) {
-            log.info("Failed pause task {} -{}, {}", jobKey.getGroup(), jobKey.getName(), exception.getMessage());
-            throw new TaskException(exception);
-        }
-    }
-
-    @Override
-    public void resumeTask(JobKey jobKey) {
-        try {
-            scheduler.resumeJob(jobKey);
-            log.info("Resume task {} -{}", jobKey.getGroup(), jobKey.getName());
-        } catch (SchedulerException exception) {
-            log.info("Failed resume task {} -{}, {}", jobKey.getGroup(), jobKey.getName(), exception.getMessage());
-            throw new TaskException(exception);
-        }
-    }
-
     @Override
     public JobDataMap createJobData(Map<?, ?> map) {
         return new JobDataMap(map);
@@ -99,5 +47,68 @@ public class TaskServiceImpl implements TaskService {
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
                 .usingJobData(jobDataMap)
                 .build();
+    }
+
+    private final Scheduler scheduler;
+
+    @Autowired
+    public TaskServiceImpl(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    @Override
+    public void addTask(JobDetail jobDetail, CronTrigger cronTrigger) {
+        try {
+            scheduler.scheduleJob(jobDetail, cronTrigger);
+            log.info("Add task {} - {}", jobDetail.getKey().getGroup(), jobDetail.getKey().getName());
+        } catch (SchedulerException exception) {
+            log.error("Failed create {} - {}, {}",
+                    jobDetail.getKey().getGroup(), jobDetail.getKey().getName(), exception.getMessage());
+            throw new TaskException(exception);
+        }
+    }
+
+    @Override
+    public void deleteTask(JobKey jobKey) {
+        try {
+            scheduler.deleteJob(jobKey);
+            log.info("Delete task {} -{}", jobKey.getGroup(), jobKey.getName());
+        } catch (SchedulerException exception) {
+            log.error("Failed delete task {} -{}, {}", jobKey.getGroup(), jobKey.getName(), exception.getMessage());
+            throw new TaskException(exception);
+        }
+    }
+
+    @Override
+    public void pauseTask(JobKey jobKey) {
+        try {
+            scheduler.pauseJob(jobKey);
+            log.info("Pause task {} -{}", jobKey.getGroup(), jobKey.getName());
+        } catch (SchedulerException exception) {
+            log.error("Failed pause task {} -{}, {}", jobKey.getGroup(), jobKey.getName(), exception.getMessage());
+            throw new TaskException(exception);
+        }
+    }
+
+    @Override
+    public void resumeTask(JobKey jobKey) {
+        try {
+            scheduler.resumeJob(jobKey);
+            log.info("Resume task {} -{}", jobKey.getGroup(), jobKey.getName());
+        } catch (SchedulerException exception) {
+            log.error("Failed resume task {} -{}, {}", jobKey.getGroup(), jobKey.getName(), exception.getMessage());
+            throw new TaskException(exception);
+        }
+    }
+
+    @Override
+    public boolean exists(JobKey jobKey) {
+        try {
+            return scheduler.checkExists(jobKey);
+        } catch (SchedulerException exception) {
+            log.error("Failed check job {}-{} exists, {}",
+                    jobKey.getGroup(), jobKey.getName(), exception.getMessage());
+            throw new TaskException(exception);
+        }
     }
 }
