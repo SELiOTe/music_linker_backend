@@ -39,7 +39,7 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public String upload(String catalog, String extension, byte[] bytes) throws MinioException {
+    public String upload(String catalog, String extension, byte[] bytes) {
         String filename = UUID.randomUUID().toString();
         // 分为 26 * 26 目录存储，避免同级存在大量文件
         String path = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
@@ -60,7 +60,7 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public byte[] download(String catalog, String filename) throws MinioException {
+    public byte[] download(String catalog, String filename) {
         String path = catalog + MINIO_PATH_SEPARATOR + filename.charAt(0) + MINIO_PATH_SEPARATOR
                 + filename.charAt(1) + MINIO_PATH_SEPARATOR + filename;
         try (var is = minioClient.getObject(GetObjectArgs.builder()

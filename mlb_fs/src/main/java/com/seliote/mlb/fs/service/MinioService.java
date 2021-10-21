@@ -27,8 +27,7 @@ public interface MinioService {
      * @throws MinioException 上传失败时抛出
      */
     @Filename
-    String upload(@Catalog String catalog, @Extension String extension, @NotNull byte[] bytes)
-            throws MinioException;
+    String upload(@Catalog String catalog, @Extension String extension, @NotNull byte[] bytes);
 
     /**
      * 下载文件
@@ -39,5 +38,5 @@ public interface MinioService {
      * @throws MinioException 下载失败时抛出
      */
     @NotNull
-    byte[] download(@Catalog String catalog, @Filename String filename) throws MinioException;
+    byte[] download(@Catalog String catalog, @Filename String filename);
 }

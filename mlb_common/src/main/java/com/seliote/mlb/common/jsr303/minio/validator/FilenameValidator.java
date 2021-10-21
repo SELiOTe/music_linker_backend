@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Minio 上传后返回的文件名 JSR 303 校验实现
  * FIXME
+ *
  * @author seliote
  * @version 2021-09-12
  */

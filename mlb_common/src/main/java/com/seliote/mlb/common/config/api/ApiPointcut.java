@@ -15,7 +15,6 @@ public class ApiPointcut {
      */
     @Pointcut("(@within(org.springframework.stereotype.Controller) " +
             "&& @annotation(org.springframework.web.bind.annotation.RequestMapping) " +
-            "&& @annotation(org.springframework.web.bind.annotation.ResponseBody) " +
             "&& execution(public * com.seliote.mlb..*.*(..))) " +
             "|| (@within(org.springframework.web.bind.annotation.RestController) " +
             "&& @annotation(org.springframework.web.bind.annotation.PostMapping))")
