@@ -19,6 +19,13 @@ import java.util.Map;
 @Service
 public class TaskServiceImpl implements TaskService {
 
+    private final Scheduler scheduler;
+
+    @Autowired
+    public TaskServiceImpl(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+
     @Override
     public JobDataMap createJobData(Map<?, ?> map) {
         return new JobDataMap(map);
@@ -47,13 +54,6 @@ public class TaskServiceImpl implements TaskService {
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
                 .usingJobData(jobDataMap)
                 .build();
-    }
-
-    private final Scheduler scheduler;
-
-    @Autowired
-    public TaskServiceImpl(Scheduler scheduler) {
-        this.scheduler = scheduler;
     }
 
     @Override
