@@ -11,13 +11,12 @@ import org.aspectj.lang.annotation.Pointcut;
 public class ApiPointcut {
 
     /**
-     * API 切点，只支持 POST 请求
+     * API 切点，支持 Controller 的 RequestMapping 请求以及 RestController 的 PostMapping 请求
      */
     @Pointcut("(@within(org.springframework.stereotype.Controller) " +
-            "&& @annotation(org.springframework.web.bind.annotation.RequestMapping) " +
-            "&& execution(public * com.seliote.mlb..*.*(..))) " +
+            "&& @annotation(org.springframework.web.bind.annotation.RequestMapping)) " +
             "|| (@within(org.springframework.web.bind.annotation.RestController) " +
             "&& @annotation(org.springframework.web.bind.annotation.PostMapping))")
-    public void postEndpoints() {
+    public void endpoints() {
     }
 }

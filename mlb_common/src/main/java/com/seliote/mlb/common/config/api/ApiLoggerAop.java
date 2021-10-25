@@ -30,7 +30,7 @@ public class ApiLoggerAop {
      * @return AOP 返回值
      * @throws Throwable 方法处理过程中抛出
      */
-    @Around("com.seliote.mlb.common.config.api.ApiPointcut.postEndpoints()")
+    @Around("com.seliote.mlb.common.config.api.ApiPointcut.endpoints()")
     public Object logger(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         var ip = NetworkUtils.getRequestIp();
         var uri = NetworkUtils.getRequestUri();

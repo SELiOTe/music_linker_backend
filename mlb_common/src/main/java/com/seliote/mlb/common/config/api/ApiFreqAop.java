@@ -50,7 +50,7 @@ public class ApiFreqAop {
      *
      * @param joinPoint JoinPoint 对象
      */
-    @Before("com.seliote.mlb.common.config.api.ApiPointcut.postEndpoints() " +
+    @Before("com.seliote.mlb.common.config.api.ApiPointcut.endpoints() " +
             "&& @annotation(com.seliote.mlb.common.config.api.ApiFreq)")
     public void freq(JoinPoint joinPoint) {
         // 存储调用频率的 Redis Key 为 namespace:freq:${uri}:${identifier}:${unitTime} 过期时间为 period

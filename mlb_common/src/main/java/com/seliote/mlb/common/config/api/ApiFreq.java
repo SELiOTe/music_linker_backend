@@ -14,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiFreq {
     // 限制类型
+    // Body 类型只支持 POST 请求，且只能包含一个参数
     ApiFreqType type() default ApiFreqType.HEADER;
 
     // 限制字段

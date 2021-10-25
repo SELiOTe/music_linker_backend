@@ -7,17 +7,13 @@ import com.seliote.mlb.common.config.api.ApiFreq;
 import com.seliote.mlb.common.domain.resp.Resp;
 import com.seliote.mlb.common.exception.ApiException;
 import com.seliote.mlb.mobile.domain.req.music.CanPlayReq;
-import com.seliote.mlb.mobile.domain.req.music.PlayMusicReq;
 import com.seliote.mlb.mobile.domain.resp.music.CanPlayResp;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -67,24 +63,24 @@ public class MusicController {
     /**
      * 获取播放流
      *
-     * @param req 请求实体
+     * @param musicId 音乐 ID
      */
     @SneakyThrows
-    @RequestMapping(value = "/play_music", method = RequestMethod.POST)
+    @RequestMapping(value = "/play_music", method = RequestMethod.GET)
     @ApiFreq(freq = 60)
-    public void playMusic(@RequestBody @NotNull @Valid PlayMusicReq req,
+    public void playMusic(@RequestParam("music_id") Long musicId,
                           HttpServletResponse response) {
         var userId = userService.currentUserId().orElseThrow(() -> {
             log.warn("Can not get user id by security context");
             return new ApiException("Can not get user id by security context");
         });
         var canPlay = musicService.canPlay(
-                CanPlaySi.builder().userId(userId).musicId(req.getMusicId()).build());
+                CanPlaySi.builder().userId(userId).musicId(musicId).build());
         if (!canPlay) {
-            log.warn("User {} want to play music {}, permission deny", userId, req.getMusicId());
+            log.warn("User {} want to play music {}, permission deny", userId, musicId);
             throw new ApiException("Permission deny for play music");
         }
-        var musicBytes = musicService.playMusic(req.getMusicId());
+        var musicBytes = musicService.playMusic(musicId);
         // 直接操作响应
         response.getOutputStream().write(musicBytes);
     }
